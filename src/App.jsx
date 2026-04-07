@@ -76,6 +76,11 @@ export const App = () => {
         setPdfData({ ...obtenerDatos() });
     }
 
+    function handleReset() {
+        reset();
+        setPdfData(null);
+    }
+
     return (
         <Container p={5} maxW="4xl" mt={3}>
             <Flex mb={2} justifyContent="space-between" alignItems="center">
@@ -84,7 +89,7 @@ export const App = () => {
 
             </Flex>
             <Flex justify={'end'}>
-                <Button variant={'ghost'} onClick={reset}>
+                <Button variant={'ghost'} onClick={handleReset}>
                     <Trash2 />Limpiar datos
                 </Button>
             </Flex>
