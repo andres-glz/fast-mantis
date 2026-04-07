@@ -3,16 +3,28 @@ import React from 'react'
 
 export const ChangesSection = ({ changes, setChanges }) => {
 
-  const handlePaste = (e, index) => {
-    const items = Array.from(e.clipboardData.items).filter(x => x.type.startsWith('image'));
-    if (items.length === 0) return;
+  const fileToDataUrl = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result); // data URL
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+  const handlePaste = async (e, index) => {
+    const files = Array.from(e.clipboardData.items)
+      .filter((x) => x.type.startsWith("image/"))
+      .map((x) => x.getAsFile())
+      .filter(Boolean);
+
+    if (!files.length) return;
+
+    const dataUrls = await Promise.all(files.map(fileToDataUrl));
 
     const newChanges = [...changes];
-    const newUrls = items.map(item => URL.createObjectURL(item.getAsFile()));
-
     newChanges[index] = {
       ...newChanges[index],
-      images: [...(newChanges[index].images || []), ...newUrls],
+      images: [...(newChanges[index].images || []), ...dataUrls],
     };
     setChanges(newChanges);
   };

@@ -3,45 +3,35 @@
  * @returns {string}
  */
 export function generatePM(data) {
-    let pm = `** PM **
-
-Modificación:
-${data.cambios}`;
+    let pm = `** PM **\n\nModificación:\n${data.cambios}`;
 
     if (data.reglasNegocio.length > 0) {
-        pm += `\n\nReglas de negocio:   ~\\Aplicacion\\front\\bin\\
-${data.reglasNegocio}`;
+        pm += `\n\nReglas de negocio:   ~\\Aplicacion\\front\\bin\\\n${data.reglasNegocio}`;
     }
     if (data.vistas.length > 0) {
-        pm += `\n\nVistas:  ~\\Sitio\\Views\\Vistas\\
-${data.vistas}`;
+        pm += `\n\nVistas:  ~\\Sitio\\Views\\Vistas\\\n${data.vistas}`;
     }
-    if (data.templates.length > 0) {
-        pm += `\n\nTemplates:  ~\\Sitio\\Templates\\[Modulo]\\
-${data.templates}`;
+    if (data.templates.enabled) {
+        pm += `\n\nTemplates:  ~\\Sitio\\Templates\\[Modulo]\\\n${data.templates.value}`;
     }
-    if (data.formatos.length > 0) {
-        pm += `\n\nFormatos de impresión:  ~\\Aplicacion\\Server\\Control\\[Company]\\Formatos\\
-${data.formatos}`;
+    if (data.formatos.enabled) {
+        pm += `\n\nFormatos de impresión:  ~\\Aplicacion\\Server\\Control\\[Company]\\Formatos\\\n${data.formatos.value}`;
     }
 
-    pm += `
+    if (data.sprint.enabled || data.ticket.enabled) {
+        pm += `\n\nReferencias:`;
 
-Referencias:`;
+        if (data.sprint.enabled) {
+            pm += `\n- Sprint: ${data.sprint.value}`;
+        }
 
-    if (data.sprint) {
-        pm += `\n- Sprint: ${data.sprint}`;
+        if (data.ticket.enabled) {
+            pm += `\n- Ticket: ${data.ticket.value}`;
+        }
     }
 
-    if (data.ticket) {
-        pm += `\n- Ticket: ${data.ticket}`;
-    }
-
-    if (data.evidencias) {
-        pm += `
-
-Evidencias:
-- ${data.evidencias}`;
+    if (data.evidencias.enabled) {
+        pm += `\n\nEvidencias:\n- ${data.evidencias.value}`;
     }
 
     return pm;

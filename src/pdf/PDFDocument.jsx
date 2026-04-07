@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 
 });
 
-const StyledDocument = ({ data }) => {
+const PDFDocument = ({ data }) => {
     const today = new Date().toISOString().split('T')[0];
     const changes = data.changes || [];
 
@@ -96,16 +96,16 @@ const StyledDocument = ({ data }) => {
                             <Text>Tipo</Text>
                         </View>
                         <View style={[{ flex: 1 }, styles.cell]}>
-                            <Text>{data.tipo}</Text>
+                            <Text>{data.tipoMantis}</Text>
                         </View>
                     </View>
-                    {data.sprint && (
+                    {data.sprint.enabled && (
                         <View style={styles.hed}>
                             <View style={[{ width: '25%' }, styles.cell_l, styles.cell, styles.cell_color]}>
                                 <Text>Sprint</Text>
                             </View>
                             <View style={[{ flex: 1 }, styles.cell]}>
-                                <Text>{data.sprint}</Text>
+                                <Text>{data.sprint.value}</Text>
                             </View>
                         </View>
                     )}
@@ -131,8 +131,8 @@ const StyledDocument = ({ data }) => {
                         {data.componentes.map((c, i) => (
                             <View key={i} style={styles.hed}>
                                 <View style={[{ flex: 2 }, styles.cell_l, styles.cell]}><Text>{c.componente}</Text></View>
-                                <View style={[{ flex: 1 }, styles.cell]}><Text>{c.version_dll}</Text></View>
-                                <View style={[{ flex: 1 }, styles.cell]}><Text>{c.version_ascx}</Text></View>
+                                <View style={[{ flex: 1 }, styles.cell]}><Text>{c.original.version_dll.trim() !== "" ? c.version_dll : "-"}</Text></View>
+                                <View style={[{ flex: 1 }, styles.cell]}><Text>{c.original.version_ascx.trim() !== "" ? c.version_ascx : "-"}</Text></View>
                             </View>
                         ))}
                     </View>
@@ -160,4 +160,4 @@ const StyledDocument = ({ data }) => {
     );
 };
 
-export default StyledDocument;
+export default PDFDocument;

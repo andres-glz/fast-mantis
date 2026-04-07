@@ -1,27 +1,25 @@
-import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switch, Textarea } from '@chakra-ui/react'
-import { Field, Input } from "@chakra-ui/react"
-import { NativeSelect } from "@chakra-ui/react"
 import React, { useState } from 'react'
+import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switch, Textarea, Field, Input, NativeSelect } from '@chakra-ui/react'
 import { ColorModeButton } from './components/ui/color-mode'
-import { LuCheck, LuCopy } from 'react-icons/lu'
 import { Toaster, toaster } from '@/components/ui/toaster'
+import { LuCheck, LuCopy } from 'react-icons/lu'
 import { BrushCleaning, GitCommitVertical, NotepadText, Save, Trash2 } from 'lucide-react'
-import { ProPdfGenerator } from './pdf/ProPdfGenerator'
+
+//PDF
+import { PDFViewerContainer } from './pdf/PDFViewerContainer'
+
+//COMPONENTS
 import { ChangesSection } from './sections/ChangesSection'
+
+//GENERATORS
 import { generateCommit } from './generators/generateCommit'
 import { generatePM } from './generators/generatePM'
+
+//HOOKS
 import { useMantisForm } from './hooks/useMantisForm'
 
-const TIPOS_MANTIS = [
-    'Mejora de funcionalidad',
-    'Error de programa',
-    'Actividad',
-    'Control de cambios',
-    'Funcionalidad nueva',
-    'Implementación',
-    'Módulo nuevo',
-    'Programa nuevo',
-]
+//CONSTANTES
+import { TIPOS_MANTIS } from './constants/TIPOS_MANTIS'
 
 export const App = () => {
     const {
@@ -67,12 +65,7 @@ export const App = () => {
     }
 
     function handleGenerateCommit() {
-        const data = obtenerDatos();
-        setField('output', generateCommit(data, {
-            usaPorque: state.porque.enabled,
-            usaComo: state.como.enabled,
-            usaImpacto: state.impacto.enabled,
-        }));
+        setField('output', generateCommit(obtenerDatos()));
     }
 
     function handleGeneratePM() {
@@ -80,13 +73,13 @@ export const App = () => {
     }
 
     function handleGeneratePDF() {
-        setPdfData({ ...obtenerDatos(), changes: state.changes });
+        setPdfData({ ...obtenerDatos() });
     }
 
     return (
         <Container p={5} maxW="4xl" mt={3}>
             <Flex mb={2} justifyContent="space-between" alignItems="center">
-                <Heading size={'2xl'} mb={5} flex={1}>Generar de Mantis</Heading>
+                <Heading size={'2xl'} mb={5} flex={1}>Documentador de Mantis</Heading>
                 <ColorModeButton />
 
             </Flex>
@@ -297,7 +290,7 @@ export const App = () => {
                 </Flex>
                 <Toaster />
 
-                {pdfData && <ProPdfGenerator data={pdfData} />}
+                {pdfData && <PDFViewerContainer data={pdfData} />}
 
             </Stack>
         </Container>

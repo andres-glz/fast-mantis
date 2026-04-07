@@ -13,7 +13,7 @@ export const initialState = {
     changes: [{ description: "", images: [] }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
-    sprint: { enabled: true, value: 36 },
+    sprint: { enabled: true, value: 37 },
     porque: { enabled: false, value: "" },
     como: { enabled: false, value: "" },
     impacto: { enabled: false, value: "" },
@@ -105,7 +105,7 @@ function fromStoredData(raw) {
                   ? [c.images]
                   : [],
         })),
-        sprint: { enabled: raw.usaSprint ?? true, value: raw.sprint ?? 33 },
+        sprint: { enabled: raw.usaSprint ?? true, value: raw.sprint ?? 37 },
         porque: { enabled: raw.usaPorque ?? false, value: raw.porque ?? "" },
         como: { enabled: raw.usaComo ?? false, value: raw.como ?? "" },
         impacto: { enabled: raw.usaImpacto ?? false, value: raw.impacto ?? "" },
@@ -163,73 +163,53 @@ export function useMantisForm() {
 
     // Builds the normalized data object consumed by the generators and PDF
     const obtenerDatos = () => {
-        const {
-            tipoMantis,
-            mantis,
-            brief,
-            title,
-            components,
-            changes,
-            sprint,
-            porque,
-            como,
-            impacto,
-            templates,
-            formatos,
-            ticket,
-            evidencias,
-        } = state;
-
-        const tipo = tipoMantis || "Tipo de Mantis";
-        const commitTitle = sprint.enabled
-            ? `${tipo} - Sprint: ${sprint.value}`
+        const tipo = state.tipoMantis || "Tipo de Mantis";
+        const commitTitle = state.sprint.enabled
+            ? `${tipo} - Sprint: ${state.sprint.value}`
             : tipo;
 
         return {
+            ...state,
+
+            mantisEnabled: state.mantis.trim() !== "",
+            mantis: state.mantis || "3XXXX",
+            mantisUrl: `https://mantis.tca.com/assist/view.php?id=${state.mantis || "3XXXX"}`,
+            title: state.title || "Título del Mantis",
+            tipoMantis: tipo,
+            brief: state.brief || "Descripción corta del cambio",
             commitTitle,
-            brief: brief || "Descripción corta del cambio",
-            title: title || "Título del Mantis",
-            mantisUrl: `https://mantis.tca.com/assist/view.php?id=${mantis || "3XXXX"}`,
-            tipo,
-            sprint: sprint.value,
-            sprintText: sprint.enabled ? `Sprint: ${sprint.value}` : "",
-            componentes: components
+
+            componentes: state.components
                 .filter((c) => c.componente.trim() !== "")
                 .map((c) => ({
+                    original: c,
                     componente: c.componente,
                     version_dll: "10.1." + c.version_dll,
                     version_ascx: "10.1." + c.version_ascx,
                     version: `DLL: 10.1.${c.version_dll || "X.X"}${c.version_ascx ? ", ASCX: 10.1." + c.version_ascx : ""}`,
                 })),
-            reglasNegocio: components
+
+            reglasNegocio: state.components
                 .filter((c) => c.version_dll.trim() !== "")
                 .map(
                     (c) =>
                         `- ${c.componente}.dll (Versión: 10.1.${c.version_dll})`,
                 )
                 .join("\n"),
-            vistas: components
+
+            vistas: state.components
                 .filter((c) => c.version_ascx.trim() !== "")
                 .map(
                     (c) =>
                         `- ${c.componente}.ascx (Versión: 10.1.${c.version_ascx})`,
                 )
                 .join("\n"),
-            mantis: mantis || "3XXXX",
+            
             cambios:
-                changes
+                state.changes
                     .filter((c) => c.description.trim())
                     .map((c) => `- ${c.description}`)
                     .join("\n") || "- Descripción detallada del cambio realizado en el código.",
-            porque:
-                porque.value || "Razón por la cual se ha realizado el cambio.",
-            como: como.value || "Cómo se ha implementado el cambio.",
-            impacto:
-                impacto.value || "Impacto esperado del cambio en el sistema.",
-            templates: templates.value,
-            formatos: formatos.value,
-            ticket: ticket.value,
-            evidencias: evidencias.value,
         };
     };
 
