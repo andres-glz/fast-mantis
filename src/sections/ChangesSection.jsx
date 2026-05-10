@@ -1,8 +1,37 @@
 import { Button, Field, Flex, Heading, HStack, Textarea, VStack } from '@chakra-ui/react'
-import { X } from 'lucide-react'
-import React from 'react'
+import { GripVertical, X } from 'lucide-react'
+import React, { useRef, useState } from 'react'
 
 export const ChangesSection = ({ changes, setChanges }) => {
+  const dragIndex = useRef(null);
+  const [draggingOver, setDraggingOver] = useState(null);
+
+  const handleDragStart = (index) => {
+    dragIndex.current = index;
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    setDraggingOver(index);
+  };
+
+  const handleDrop = (index) => {
+    if (dragIndex.current === null || dragIndex.current === index) {
+      setDraggingOver(null);
+      return;
+    }
+    const reordered = [...changes];
+    const [moved] = reordered.splice(dragIndex.current, 1);
+    reordered.splice(index, 0, moved);
+    setChanges(reordered);
+    dragIndex.current = null;
+    setDraggingOver(null);
+  };
+
+  const handleDragEnd = () => {
+    dragIndex.current = null;
+    setDraggingOver(null);
+  };
 
   const fileToDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -46,8 +75,24 @@ export const ChangesSection = ({ changes, setChanges }) => {
       <Heading size="md" mb={2}>Cambios realizados</Heading>
 
       {changes.map((change, index) => (
-        <VStack key={index} >
+        <VStack
+          key={index}
+          draggable
+          onDragStart={() => handleDragStart(index)}
+          onDragOver={(e) => handleDragOver(e, index)}
+          onDrop={() => handleDrop(index)}
+          onDragEnd={handleDragEnd}
+          style={{
+            opacity: dragIndex.current === index ? 0.4 : 1,
+            outline: draggingOver === index ? '2px dashed #3182ce' : 'none',
+            borderRadius: '6px',
+            transition: 'outline 0.1s',
+          }}
+        >
           <HStack w="full" alignItems="flex-start">
+            <Flex alignSelf="flex-end" mb={2} cursor="grab" color="gray.400">
+              <GripVertical size={18} />
+            </Flex>
             <Field.Root flex={1}>
               <Field.Label>Cambio {index + 1}</Field.Label>
               <Textarea autoresize value={change.description} onChange={(e) => setChanges(changes.map((c, i) => i === index ? { ...c, description: e.target.value } : c))} />
