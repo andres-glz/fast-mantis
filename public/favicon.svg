@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 120">
+  <!-- Documento base (sombra/profundidad) -->
+  <rect x="22" y="10" width="90" height="110" rx="7" fill="#1d4ed8" opacity="0.35"/>
+
+  <!-- Documento principal -->
+  <rect x="10" y="0" width="90" height="112" rx="7" fill="#2563eb"/>
+
+  <!-- Esquina doblada -->
+  <path d="M75 0 L100 25 L75 25 Z" fill="#1d4ed8" opacity="0.6"/>
+  <path d="M75 0 L100 25 L75 25 Z" fill="white" opacity="0.15"/>
+
+  <!-- Badge / chip de feature -->
+  <rect x="17" y="14" width="42" height="14" rx="7" fill="white" opacity="0.25"/>
+  <rect x="20" y="17" width="10" height="4" rx="2" fill="white" opacity="0.9"/>
+  <rect x="34" y="17" width="20" height="4" rx="2" fill="white" opacity="0.6"/>
+
+  <!-- Líneas de texto -->
+  <rect x="22" y="38" width="56" height="7" rx="3.5" fill="white" opacity="0.9"/>
+  <rect x="22" y="53" width="44" height="7" rx="3.5" fill="white" opacity="0.6"/>
+  <rect x="22" y="68" width="50" height="7" rx="3.5" fill="white" opacity="0.6"/>
+  <rect x="22" y="83" width="36" height="7" rx="3.5" fill="white" opacity="0.4"/>
+
+  <!-- Check / completado -->
+  <circle cx="80" cy="98" r="10" fill="white" opacity="0.15"/>
+  <polyline points="74,98 78,103 86,94" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

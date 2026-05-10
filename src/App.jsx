@@ -3,7 +3,7 @@ import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switc
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { LuCheck, LuCopy } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, NotepadText, Save, Trash2 } from 'lucide-react'
+import { BrushCleaning, GitCommitVertical, NotepadText, Save, Trash2, X } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
@@ -13,6 +13,7 @@ import { ChangesSection } from './sections/ChangesSection'
 
 //GENERATORS
 import { generateCommit } from './generators/generateCommit'
+import { generateCommitGit } from './generators/generateCommitGit'
 import { generatePM } from './generators/generatePM'
 
 //HOOKS
@@ -26,9 +27,11 @@ export const App = () => {
         state,
         setField,
         toggleSection,
+        setSectionSwitch,
         setSectionValue,
         updateComponent,
         addComponent,
+        removeComponent,
         reset,
         saveProgress,
         obtenerDatos,
@@ -36,6 +39,7 @@ export const App = () => {
 
     // UI-only state — not persisted, not part of form logic
     const [isCopy, setIsCopy] = useState(false);
+    const [isCopyGitTitle, setIsCopyGitTitle] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [pdfData, setPdfData] = useState(null);
 
@@ -52,6 +56,19 @@ export const App = () => {
         });
     }
 
+    function copyGitCommit() {
+        navigator.clipboard.writeText(state.gitCommitTitle.value).then(() => {
+            setIsCopyGitTitle(true);
+            toaster.create({
+                description: `Git Commit Title copiado al portapapeles`,
+                type: "success",
+                closable: true,
+                duration: 1500,
+            });
+            setTimeout(() => setIsCopyGitTitle(false), 1500);
+        });
+    }
+
     function handleSave() {
         saveProgress();
         setIsSaved(true);
@@ -64,11 +81,27 @@ export const App = () => {
         setTimeout(() => setIsSaved(false), 1500);
     }
 
+    function handleGenerateCommitGit() {
+        setSectionSwitch('gitCommitTitle', true);
+        setSectionValue('gitCommitTitle', generateCommitTitle());
+        setField('output', generateCommitGit(obtenerDatos()));
+    }
+
+    function generateCommitTitle() {
+        const data = obtenerDatos();
+        console.log(data.tipoMantis);
+        console.log(TIPOS_MANTIS);
+        const feat = TIPOS_MANTIS.find(t => t.title === data.tipoMantis)?.value || 'feat';
+        return `${feat}(S${data.sprint || '00'}): [${data.jira || 'TL-0000'}] ${data.jiraTitle || 'Título del Jira'}`;
+    }
+
     function handleGenerateCommit() {
+        setSectionSwitch('gitCommitTitle', false);
         setField('output', generateCommit(obtenerDatos()));
     }
 
     function handleGeneratePM() {
+        setSectionSwitch('gitCommitTitle', false);
         setField('output', generatePM(obtenerDatos()));
     }
 
@@ -84,7 +117,12 @@ export const App = () => {
     return (
         <Container p={5} maxW="4xl" mt={3}>
             <Flex mb={2} justifyContent="space-between" alignItems="center">
-                <Heading size={'2xl'} mb={5} flex={1}>Documentador de Mantis</Heading>
+                <Heading size={'2xl'} mb={5} flex={1}>
+                    <HStack gap={3} alignItems="center">
+                        <img src="/favicon.svg" alt="Mantis logo" style={{ width: '2rem', height: '2rem' }} />
+                        Fast Mantis
+                    </HStack>
+                </Heading>
                 <ColorModeButton />
 
             </Flex>
@@ -106,6 +144,14 @@ export const App = () => {
                         />
                     </Field.Root>
                     <Field.Root>
+                        <Field.Label>Jira</Field.Label>
+                        <Input
+                            placeholder='TL-0000'
+                            value={state.jira}
+                            onChange={(e) => setField('jira', e.target.value)}
+                        />
+                    </Field.Root>
+                    <Field.Root>
                         <Field.Label>Tipo</Field.Label>
                         <NativeSelect.Root>
                             <NativeSelect.Field
@@ -114,7 +160,7 @@ export const App = () => {
                                 onChange={(e) => setField('tipoMantis', e.target.value)}
                             >
                                 {TIPOS_MANTIS.map((tipo) => (
-                                    <option key={tipo} value={tipo}>{tipo}</option>
+                                    <option key={tipo.title} value={tipo.title}>{tipo.title}</option>
                                 ))}
                             </NativeSelect.Field>
                             <NativeSelect.Indicator />
@@ -123,8 +169,13 @@ export const App = () => {
                 </HStack>
 
                 <Field.Root>
-                    <Field.Label>Title</Field.Label>
+                    <Field.Label>Mantis Title</Field.Label>
                     <Input value={state.title} onChange={(e) => setField('title', e.target.value)} />
+                </Field.Root>
+
+                <Field.Root>
+                    <Field.Label>Jira Title</Field.Label>
+                    <Input value={state.jiraTitle} onChange={(e) => setField('jiraTitle', e.target.value)} />
                 </Field.Root>
 
                 <Field.Root>
@@ -135,7 +186,7 @@ export const App = () => {
                 <Box borderWidth="1px" borderRadius="md" p={4}>
                     <Heading size="md" mb={4}>Componentes</Heading>
                     {state.components.map((comp, index) => (
-                        <HStack key={index} mb={3} gap={3}>
+                        <HStack key={index} mb={3} gap={3} alignItems="flex-end">
                             <Field.Root flex={2}>
                                 <Field.Label>Nombre del componente</Field.Label>
                                 <Input
@@ -163,6 +214,17 @@ export const App = () => {
                                     />
                                 </InputGroup>
                             </Field.Root>
+                            <Button
+                                variant="ghost"
+                                colorPalette="red"
+                                size="sm"
+                                mb={1}
+                                disabled={state.components.length === 1}
+                                onClick={() => removeComponent(index)}
+                                aria-label="Eliminar componente"
+                            >
+                                <X />
+                            </Button>
                         </HStack>
                     ))}
                 </Box>
@@ -279,17 +341,35 @@ export const App = () => {
 
                 <Flex justifyContent="flex-end" gap={3} mt={5}>
                     <Button w={150} variant={'subtle'} onClick={handleGenerateCommit}><GitCommitVertical />Commit</Button>
+                    <Button w={150} variant={'subtle'} onClick={handleGenerateCommitGit}><GitCommitVertical />Commit Git</Button>
                     <Button w={150} onClick={handleGeneratePM}><NotepadText />PM</Button>
                     <Button w={150} onClick={handleGeneratePDF}><NotepadText />PDF</Button>
                     <Button variant={isSaved ? 'plain' : 'ghost'} onClick={handleSave}>
                         {isSaved ? <LuCheck /> : <Save />}
                     </Button>
+                    
+                </Flex>
+
+                {state.gitCommitTitle.enabled && (
+                    <HStack mt={5} alignItems="end" gap={3}>
+                        <Field.Root>
+                            <Field.Label>Git Commit Title</Field.Label>
+                            <Input value={state.gitCommitTitle.value}
+                                onChange={(e) => setSectionValue('gitCommitTitle', e.target.value)}
+                                variant={'subtle'}
+                            />
+                        </Field.Root>
+                        <Button variant={isCopyGitTitle ? 'plain' : 'ghost'} onClick={copyGitCommit}>
+                            {isCopyGitTitle ? <LuCheck /> : <LuCopy />}
+                        </Button>
+                    </HStack>
+                )}
+                <HStack mt={5} alignItems="start" gap={3}>
+                    <Textarea placeholder='Output' variant={'subtle'} value={state.output} onChange={(e) => setField('output', e.target.value)} autoresize />
                     <Button variant={isCopy ? 'plain' : 'ghost'} onClick={copyOutput}>
                         {isCopy ? <LuCheck /> : <LuCopy />}
                     </Button>
-                </Flex>
-
-                <Textarea mt={5} placeholder='Output' variant={'subtle'} value={state.output} onChange={(e) => setField('output', e.target.value)} autoresize />
+                </HStack>
                 <Flex justifyContent="flex-end">
                     <Button onClick={() => setField('output', '')} variant={'surface'}><BrushCleaning />Limpiar</Button>
                 </Flex>
