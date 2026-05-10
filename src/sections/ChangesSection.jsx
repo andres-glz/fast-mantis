@@ -1,4 +1,5 @@
-import { Button, Field, Flex, Heading, Textarea, VStack } from '@chakra-ui/react'
+import { Button, Field, Flex, Heading, HStack, Textarea, VStack } from '@chakra-ui/react'
+import { X } from 'lucide-react'
 import React from 'react'
 
 export const ChangesSection = ({ changes, setChanges }) => {
@@ -36,16 +37,33 @@ export const ChangesSection = ({ changes, setChanges }) => {
     setChanges(newChanges);
   };
 
+  const handleRemoveChange = (index) => {
+    setChanges(changes.filter((_, i) => i !== index));
+  };
+
   return (
     <Flex borderWidth="1px" borderRadius="md" p={4} gap={6} flexDirection={'column'}>
       <Heading size="md" mb={2}>Cambios realizados</Heading>
 
       {changes.map((change, index) => (
         <VStack key={index} >
-          <Field.Root>
-            <Field.Label>Cambio {index + 1}</Field.Label>
-            <Textarea autoresize value={change.description} onChange={(e) => setChanges(changes.map((c, i) => i === index ? { ...c, description: e.target.value } : c))} />
-          </Field.Root>
+          <HStack w="full" alignItems="flex-start">
+            <Field.Root flex={1}>
+              <Field.Label>Cambio {index + 1}</Field.Label>
+              <Textarea autoresize value={change.description} onChange={(e) => setChanges(changes.map((c, i) => i === index ? { ...c, description: e.target.value } : c))} />
+            </Field.Root>
+            <Button
+              variant="ghost"
+              colorPalette="red"
+              size="sm"
+              mt={6}
+              disabled={changes.length === 1}
+              onClick={() => handleRemoveChange(index)}
+              aria-label="Eliminar cambio"
+            >
+              <X />
+            </Button>
+          </HStack>
           <div onPaste={e => handlePaste(e, index)} style={{ border: '2px dashed #ccc', padding: '20px', textAlign: 'center' }}>
             <p>Haz clic aquí y presiona Ctrl + V para pegar una imagen</p>
 
@@ -69,7 +87,7 @@ export const ChangesSection = ({ changes, setChanges }) => {
         </VStack>
       ))}
       <Flex justifyContent="flex-end">
-        <Button onClick={() => setChanges([...changes, { description: "", images: null }])} variant={'outline'}>Agregar cambio</Button>
+        <Button onClick={() => setChanges([...changes, { description: "", images: [] }])} variant={'outline'}>Agregar cambio</Button>
       </Flex>
     </Flex>
   )
