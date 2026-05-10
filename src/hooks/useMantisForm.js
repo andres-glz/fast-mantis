@@ -8,12 +8,15 @@ export const initialState = {
     tipoMantis: "",
     title: "",
     brief: "",
+    jira: "",
+    jiraTitle: "",
+    gitCommitTitle: { enabled: false, value: "" },
     output: "",
     components: [{ componente: "", version_dll: "", version_ascx: "" }],
     changes: [{ description: "", images: [] }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
-    sprint: { enabled: true, value: 37 },
+    sprint: { enabled: true, value: 39 },
     porque: { enabled: false, value: "" },
     como: { enabled: false, value: "" },
     impacto: { enabled: false, value: "" },
@@ -46,6 +49,15 @@ function mantisReducer(state, action) {
                 [action.section]: {
                     ...state[action.section],
                     value: action.value,
+                },
+            };
+
+        case "SET_SWITCH_SECTION_VALUE":
+            return {
+                ...state,
+                [action.section]: {
+                    ...state[action.section],
+                    enabled: action.value,
                 },
             };
 
@@ -106,6 +118,9 @@ function fromStoredData(raw) {
                   : [],
         })),
         sprint: { enabled: raw.usaSprint ?? true, value: raw.sprint ?? 37 },
+        jira: { enabled: raw.usaJira ?? true, value: raw.jira ?? "" },
+        jiraTitle: raw.jiraTitle || "",
+        gitCommitTitle: { enabled: raw.usaGitCommitTitle ?? false, value: raw.gitCommitTitle ?? "" },
         porque: { enabled: raw.usaPorque ?? false, value: raw.porque ?? "" },
         como: { enabled: raw.usaComo ?? false, value: raw.como ?? "" },
         impacto: { enabled: raw.usaImpacto ?? false, value: raw.impacto ?? "" },
@@ -150,6 +165,8 @@ export function useMantisForm() {
         dispatch({ type: "SET_FIELD", field, value });
     const toggleSection = (section) =>
         dispatch({ type: "TOGGLE_SECTION", section });
+    const setSectionSwitch = (section, value) =>
+        dispatch({ type: "SET_SWITCH_SECTION_VALUE", section, value });
     const setSectionValue = (section, value) =>
         dispatch({ type: "SET_SECTION_VALUE", section, value });
     const updateComponent = (index, key, value) =>
@@ -176,8 +193,11 @@ export function useMantisForm() {
             mantisUrl: `https://mantis.tca.com/assist/view.php?id=${state.mantis || "3XXXX"}`,
             title: state.title || "Título del Mantis",
             tipoMantis: tipo,
+            jira: state.jira,
             brief: state.brief || "Descripción corta del cambio",
             commitTitle,
+            sprint: state.sprint.value,
+            jiraTitle: state.jiraTitle,
 
             componentes: state.components
                 .filter((c) => c.componente.trim() !== "")
@@ -218,6 +238,7 @@ export function useMantisForm() {
         // Field actions
         setField,
         toggleSection,
+        setSectionSwitch,
         setSectionValue,
         updateComponent,
         addComponent,
