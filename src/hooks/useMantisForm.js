@@ -79,6 +79,11 @@ function mantisReducer(state, action) {
                 ],
             };
 
+        case "REMOVE_COMPONENT": {
+            const filtered = state.components.filter((_, i) => i !== action.index);
+            return { ...state, components: filtered };
+        }
+
         case "RESET":
             return initialState;
 
@@ -172,6 +177,7 @@ export function useMantisForm() {
     const updateComponent = (index, key, value) =>
         dispatch({ type: "UPDATE_COMPONENT", index, key, value });
     const addComponent = () => dispatch({ type: "ADD_COMPONENT" });
+    const removeComponent = (index) => dispatch({ type: "REMOVE_COMPONENT", index });
     const reset = () => dispatch({ type: "RESET" });
 
     const saveProgress = () => {
@@ -242,6 +248,7 @@ export function useMantisForm() {
         setSectionValue,
         updateComponent,
         addComponent,
+        removeComponent,
         reset,
         // Persistence
         saveProgress,

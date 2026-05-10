@@ -3,7 +3,7 @@ import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switc
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { LuCheck, LuCopy } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, NotepadText, Save, Trash2 } from 'lucide-react'
+import { BrushCleaning, GitCommitVertical, NotepadText, Save, Trash2, X } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
@@ -31,6 +31,7 @@ export const App = () => {
         setSectionValue,
         updateComponent,
         addComponent,
+        removeComponent,
         reset,
         saveProgress,
         obtenerDatos,
@@ -180,7 +181,7 @@ export const App = () => {
                 <Box borderWidth="1px" borderRadius="md" p={4}>
                     <Heading size="md" mb={4}>Componentes</Heading>
                     {state.components.map((comp, index) => (
-                        <HStack key={index} mb={3} gap={3}>
+                        <HStack key={index} mb={3} gap={3} alignItems="flex-end">
                             <Field.Root flex={2}>
                                 <Field.Label>Nombre del componente</Field.Label>
                                 <Input
@@ -208,6 +209,17 @@ export const App = () => {
                                     />
                                 </InputGroup>
                             </Field.Root>
+                            <Button
+                                variant="ghost"
+                                colorPalette="red"
+                                size="sm"
+                                mb={1}
+                                disabled={state.components.length === 1}
+                                onClick={() => removeComponent(index)}
+                                aria-label="Eliminar componente"
+                            >
+                                <X />
+                            </Button>
                         </HStack>
                     ))}
                 </Box>
