@@ -117,7 +117,12 @@ export const App = () => {
     return (
         <Container p={5} maxW="4xl" mt={3}>
             <Flex mb={2} justifyContent="space-between" alignItems="center">
-                <Heading size={'2xl'} mb={5} flex={1}>Documentador de Mantis</Heading>
+                <Heading size={'2xl'} mb={5} flex={1}>
+                    <HStack gap={3} alignItems="center">
+                        <img src="/favicon.svg" alt="Mantis logo" style={{ width: '2rem', height: '2rem' }} />
+                        Fast Mantis
+                    </HStack>
+                </Heading>
                 <ColorModeButton />
 
             </Flex>
