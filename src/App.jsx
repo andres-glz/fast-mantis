@@ -81,10 +81,10 @@ export const App = () => {
         setTimeout(() => setIsSaved(false), 1500);
     }
 
-    function handleGenerateCommitGit() {
+    async function handleGenerateCommitGit() {
         setSectionSwitch('gitCommitTitle', true);
         setSectionValue('gitCommitTitle', generateCommitTitle());
-        setField('output', generateCommitGit(obtenerDatos()));
+        setField('output', await generateCommitGit(obtenerDatos()));
     }
 
     function generateCommitTitle() {

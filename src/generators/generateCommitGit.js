@@ -1,7 +1,8 @@
+import { translateToEnglish } from '../utils/translate';
+
 /**
  * @param {object} data - Result of obtenerDatos()
- * @param {{ usaPorque: boolean, usaComo: boolean, usaImpacto: boolean }} flags
- * @returns {string}
+ * @returns {Promise<string>}
  * 
  *
 Ticket: TL-8541
@@ -16,7 +17,7 @@ Views:
 Changes:
 - Add "Receta Repetitiva" option to the Verification Checklist at ending medical appointment
  */
-export function generateCommitGit(data) {
+export async function generateCommitGit(data) {
     let commit = `Ticket: ${data.jira || 'TL-0000'}`;
     commit += `\nMantis: WP-${data.mantis || '30000'}`;
     
@@ -36,8 +37,10 @@ export function generateCommitGit(data) {
         commit += `\n\nFormatos de impresión:\n${data.formatos.value}`;
     }
     
+    const cambiosEnIngles = await translateToEnglish(data.cambios);
+
     commit += `\n\nChanges:`;
-    commit += `\n${data.cambios}`;
+    commit += `\n${cambiosEnIngles}`;
 
     return commit;
 }
