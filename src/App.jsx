@@ -3,7 +3,7 @@ import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switc
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { LuCheck, LuCopy } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, NotepadText, Save, Trash2, X } from 'lucide-react'
+import { BrushCleaning, GitCommitVertical, NotepadText, Save, Terminal, Trash2, X } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
@@ -21,6 +21,7 @@ import { useMantisForm } from './hooks/useMantisForm'
 
 //CONSTANTES
 import { TIPOS_MANTIS } from './constants/TIPOS_MANTIS'
+import { generateMarkdown } from './generators/generateMarkdown'
 
 export const App = () => {
     const {
@@ -47,7 +48,7 @@ export const App = () => {
         navigator.clipboard.writeText(state.output).then(() => {
             setIsCopy(true);
             toaster.create({
-                description: `${state.output.includes('** PM **') ? 'PM' : 'Commit'} copiado al portapapeles`,
+                description: `Copiado al portapapeles`,
                 type: "success",
                 closable: true,
                 duration: 1500,
@@ -93,6 +94,11 @@ export const App = () => {
         console.log(TIPOS_MANTIS);
         const feat = TIPOS_MANTIS.find(t => t.title === data.tipoMantis)?.value || 'feat';
         return `${feat}(S${data.sprint || '00'}): [${data.jira || 'TL-0000'}] ${data.jiraTitle || 'Título del Jira'}`;
+    }
+
+    function handleGenerateMarkdown() {
+        setSectionSwitch('gitCommitTitle', false);
+        setField('output', generateMarkdown(obtenerDatos()));
     }
 
     function handleGenerateCommit() {
@@ -340,6 +346,7 @@ export const App = () => {
                 )}
 
                 <Flex justifyContent="flex-end" gap={3} mt={5}>
+                    <Button w={150} variant={'subtle'} onClick={handleGenerateMarkdown}><Terminal />Markdown</Button>
                     <Button w={150} variant={'subtle'} onClick={handleGenerateCommit}><GitCommitVertical />Commit</Button>
                     <Button w={150} variant={'subtle'} onClick={handleGenerateCommitGit}><GitCommitVertical />Commit Git</Button>
                     <Button w={150} onClick={handleGeneratePM}><NotepadText />PM</Button>

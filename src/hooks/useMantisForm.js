@@ -16,7 +16,7 @@ export const initialState = {
     changes: [{ description: "", images: [] }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
-    sprint: { enabled: true, value: 39 },
+    sprint: { enabled: true, value: 41 },
     porque: { enabled: false, value: "" },
     como: { enabled: false, value: "" },
     impacto: { enabled: false, value: "" },
@@ -196,6 +196,7 @@ export function useMantisForm() {
 
             mantisEnabled: state.mantis.trim() !== "",
             mantis: state.mantis || "3XXXX",
+            wp: state.mantis,
             mantisUrl: `https://mantis.tca.com/assist/view.php?id=${state.mantis || "3XXXX"}`,
             title: state.title || "Título del Mantis",
             tipoMantis: tipo,
