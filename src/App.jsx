@@ -3,7 +3,7 @@ import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switc
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { LuCheck, LuCopy } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, NotepadText, Save, Terminal, Trash2, X } from 'lucide-react'
+import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
@@ -351,11 +351,13 @@ export const App = () => {
                 )}
 
                 <Flex justifyContent="flex-end" gap={3} mt={5}>
-                    <Button w={150} variant={'subtle'} onClick={handleGenerateMarkdown}><Terminal />Markdown</Button>
-                    <Button w={150} variant={'subtle'} onClick={handleGenerateCommit}><GitCommitVertical />Commit</Button>
-                    <Button w={150} variant={'subtle'} onClick={handleGenerateCommitGit}><GitCommitVertical />Commit Git</Button>
-                    <Button w={150} onClick={handleGeneratePM}><NotepadText />PM</Button>
-                    <Button w={150} onClick={handleGeneratePDF}><NotepadText />PDF</Button>
+                    <Flex justifyContent="flex-end" gap={3} flexWrap="wrap">
+                        <Button variant={'subtle'} onClick={handleGenerateMarkdown}><Terminal />Markdown</Button>
+                        <Button variant={'subtle'} onClick={handleGenerateCommit}><ReceiptText />Commit</Button>
+                        <Button variant={'subtle'} onClick={handleGenerateCommitGit}><GitCommitVertical />Commit Git</Button>
+                        <Button onClick={handleGeneratePM}><TextAlignJustify />PM</Button>
+                        <Button onClick={handleGeneratePDF}><FileText />PDF</Button>
+                    </Flex>
                     <Button variant={isSaved ? 'plain' : 'ghost'} onClick={handleSave}>
                         {isSaved ? <LuCheck /> : <Save />}
                     </Button>
