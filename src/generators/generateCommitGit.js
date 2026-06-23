@@ -18,29 +18,39 @@ Changes:
 - Add "Receta Repetitiva" option to the Verification Checklist at ending medical appointment
  */
 export async function generateCommitGit(data) {
-    let commit = `Ticket: ${data.jira || 'TL-0000'}`;
-    commit += `\nMantis: WP-${data.mantis || '30000'}`;
+    const mantis = data.wp ? `WP-${data.wp}` : '';
+    const jira = data.jira || mantis || '';
+    const jiraPrefix = jira ? `[${jira}] ` : '';
+    const title = data.jiraTitle || data.brief || data.title || '';
+
+    let commit = '';
+    if (data.jira) {
+        commit += `Ticket: ${data.jira}\n`;
+    }
+    if (data.wp) {
+         commit += `Mantis: WP-${data.wp}\n`;
+    }
     
     if (data.reglasNegocio.length > 0) {
-        commit += `\n\nBR:\n${data.reglasNegocio}`;
+        commit += `\nBR:\n${data.reglasNegocio}\n`;
     }
     
     if (data.vistas.length > 0) {
-        commit += `\n\nViews:\n${data.vistas}`;
+        commit += `\nViews:\n${data.vistas}\n`;
     }
     
     if (data.templates.enabled) {
-        commit += `\n\nTemplates:\n${data.templates.value}`;
+        commit += `\nTemplates:\n${data.templates.value}\n`;
     }
     
     if (data.formatos.enabled) {
-        commit += `\n\nFormatos de impresión:\n${data.formatos.value}`;
+        commit += `\nFormatos de impresión:\n${data.formatos.value}\n`;
     }
     
     const cambiosEnIngles = await translateToEnglish(data.cambios);
 
-    commit += `\n\nChanges:`;
-    commit += `\n${cambiosEnIngles}`;
+    commit += `\nChanges:\n`;
+    commit += cambiosEnIngles;
 
     return commit;
 }

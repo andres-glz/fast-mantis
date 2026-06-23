@@ -16,7 +16,7 @@ export const initialState = {
     changes: [{ description: "", images: [] }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
-    sprint: { enabled: true, value: 41 },
+    sprint: { enabled: true, value: 43 },
     porque: { enabled: false, value: "" },
     como: { enabled: false, value: "" },
     impacto: { enabled: false, value: "" },
@@ -204,6 +204,7 @@ export function useMantisForm() {
             brief: state.brief || "Descripción corta del cambio",
             commitTitle,
             sprint: state.sprint.value,
+            sprintEnabled: state.sprint.enabled,
             jiraTitle: state.jiraTitle,
 
             componentes: state.components

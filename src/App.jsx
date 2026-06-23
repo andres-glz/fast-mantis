@@ -90,10 +90,15 @@ export const App = () => {
 
     function generateCommitTitle() {
         const data = obtenerDatos();
-        console.log(data.tipoMantis);
-        console.log(TIPOS_MANTIS);
+        
         const feat = TIPOS_MANTIS.find(t => t.title === data.tipoMantis)?.value || 'feat';
-        return `${feat}(S${data.sprint || '00'}): [${data.jira || 'TL-0000'}] ${data.jiraTitle || 'Título del Jira'}`;
+        const sprint = data.sprintEnabled ? `S${data.sprint}` : data.components.length > 0 ? `${data.components[0].componente || ''}` : '';
+        const mantis = data.wp ? `WP-${data.wp}` : '';
+        const jira = data.jira || mantis || '';
+        const jiraPrefix = jira ? `[${jira}] ` : '';
+        const title = data.jiraTitle || data.brief || data.title || '';
+        
+        return `${feat}(${sprint}): ${jiraPrefix}${title}`;
     }
 
     function handleGenerateMarkdown() {

@@ -3,7 +3,7 @@
  * @returns {string}
  */
 export function generatePM(data) {
-    let pm = `** PM **\n\nModificación:\n${data.cambios}`;
+    let pm = `**PM**\n\nModificación:\n${data.cambios}`;
 
     if (data.reglasNegocio.length > 0) {
         pm += `\n\nReglas de negocio:   ~\\Aplicacion\\front\\bin\\\n${data.reglasNegocio}`;
