@@ -147,6 +147,10 @@ function fromStoredData(raw) {
             raw.components?.length > 0
                 ? raw.components
                 : initialState.components,
+        otherComponents:
+            raw.otherComponents?.length > 0
+                ? raw.otherComponents
+                : initialState.otherComponents,
         changes: (raw.changes || []).map((c) => ({
             ...c,
             images: Array.isArray(c.images)
