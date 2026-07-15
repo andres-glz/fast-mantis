@@ -16,7 +16,7 @@ export function generatePM(data) {
 
     (TYPES_COMPONENTS || []).forEach((componentType) => {
         const items = (data.otherComponents || []).filter((c) => {
-            const componentName = (c?.componente || c?.name || "").trim();
+            const componentName = (c?.name || "").trim();
             return c?.type?.value === componentType.value && componentName !== "";
         });
 
@@ -25,7 +25,7 @@ export function generatePM(data) {
         pm += `\n\n${componentType.label}:  ${componentType.path ? `~/${componentType.path}` : ""}`;
         pm += items
             .map((c) => {
-                const componentName = (c?.componente || c?.name || "").trim();
+                const componentName = (c?.name || "").trim();
                 const version = (c?.version || "").trim();
                 return `\n- ${componentName}${version ? ` (Versión: ${version})` : ""}`;
             })
