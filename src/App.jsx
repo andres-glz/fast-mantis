@@ -151,7 +151,7 @@ export const App = () => {
 
             <Stack gap={4}>
                 <HStack gap={4}>
-                    <Field.Root>
+                    <Field.Root flex={2}>
                         <Field.Label>Mantis</Field.Label>
                         <Input
                             placeholder='30000'
@@ -160,7 +160,7 @@ export const App = () => {
                             onChange={(e) => setField('mantis', e.target.value.slice(0, 5))}
                         />
                     </Field.Root>
-                    <Field.Root>
+                    <Field.Root flex={2}>
                         <Field.Label>Jira</Field.Label>
                         <Input
                             placeholder='TL-0000'
@@ -168,7 +168,15 @@ export const App = () => {
                             onChange={(e) => setField('jira', e.target.value)}
                         />
                     </Field.Root>
-                    <Field.Root>
+                    <Field.Root flex={1}>
+                        <Field.Label>Sprint</Field.Label>
+                        <Input
+                            placeholder='00'
+                            value={state.sprint.value}
+                            onChange={(e) => setField('sprint', e.target.value)}
+                        />
+                    </Field.Root>
+                    <Field.Root flex={3}>
                         <Field.Label>Tipo</Field.Label>
                         <NativeSelect.Root>
                             <NativeSelect.Field
@@ -257,20 +265,6 @@ export const App = () => {
                     removeOtherComponent={removeOtherComponent}
                     otherComponents={state.otherComponents}
                 />
-
-
-                <Switch.Root checked={state.sprint.enabled} onCheckedChange={() => toggleSection('sprint')}>
-                    <Switch.HiddenInput />
-                    <Switch.Control />
-                    <Switch.Label>Incluir Sprint</Switch.Label>
-                </Switch.Root>
-
-                {state.sprint.enabled && (
-                    <Field.Root>
-                        <Field.Label>Sprint</Field.Label>
-                        <Input type='number' max={99} min={0} value={state.sprint.value} onChange={(e) => setSectionValue('sprint', Number(e.target.value))} />
-                    </Field.Root>
-                )}
 
                 <ChangesSection changes={state.changes} setChanges={(v) => setField('changes', v)} />
 
