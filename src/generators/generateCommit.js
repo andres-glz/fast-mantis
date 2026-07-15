@@ -45,12 +45,6 @@ export function generateCommit(data) {
     if (data.vistas.length > 0) {
         commit += `\n\nVistas:\n${data.vistas}`;
     }
-    if (data.templates.enabled) {
-        commit += `\n\nTemplates:\n${data.templates.value}`;
-    }
-    if (data.formatos.enabled) {
-        commit += `\n\nFormatos de impresión:\n${data.formatos.value}`;
-    }
 
     commit += `\n-----------------------------------------------------------------`;
     commit += `\nReferencias:`;

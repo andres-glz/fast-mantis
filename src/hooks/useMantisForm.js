@@ -21,8 +21,6 @@ export const initialState = {
     porque: { enabled: false, value: "" },
     como: { enabled: false, value: "" },
     impacto: { enabled: false, value: "" },
-    templates: { enabled: false, value: "" },
-    formatos: { enabled: false, value: "" },
     ticket: { enabled: false, value: "" },
     evidencias: { enabled: false, value: "" },
 };
@@ -166,14 +164,6 @@ function fromStoredData(raw) {
         porque: { enabled: raw.usaPorque ?? false, value: raw.porque ?? "" },
         como: { enabled: raw.usaComo ?? false, value: raw.como ?? "" },
         impacto: { enabled: raw.usaImpacto ?? false, value: raw.impacto ?? "" },
-        templates: {
-            enabled: raw.usaTemplates ?? false,
-            value: raw.templates ?? "",
-        },
-        formatos: {
-            enabled: raw.usaFormatos ?? false,
-            value: raw.formatos ?? "",
-        },
         ticket: { enabled: raw.usaTicket ?? false, value: raw.ticket ?? "" },
         evidencias: {
             enabled: raw.usaEvidencias ?? false,

@@ -257,8 +257,6 @@ export const App = () => {
                     </Flex>
                 </Box>
 
-
-
                 <OtherComponents
                     updateOtherComponent={updateOtherComponent}
                     addOtherComponent={addOtherComponent}
@@ -304,33 +302,6 @@ export const App = () => {
                     <Field.Root>
                         <Field.Label>Impacto</Field.Label>
                         <Textarea autoresize value={state.impacto.value} onChange={(e) => setSectionValue('impacto', e.target.value)} />
-                    </Field.Root>
-                )}
-
-
-                <Switch.Root checked={state.templates.enabled} onCheckedChange={() => toggleSection('templates')}>
-                    <Switch.HiddenInput />
-                    <Switch.Control />
-                    <Switch.Label>Incluir Templates</Switch.Label>
-                </Switch.Root>
-
-                {state.templates.enabled && (
-                    <Field.Root>
-                        <Field.Label>Templates</Field.Label>
-                        <Textarea autoresize value={state.templates.value} onChange={(e) => setSectionValue('templates', e.target.value)} />
-                    </Field.Root>
-                )}
-
-                <Switch.Root checked={state.formatos.enabled} onCheckedChange={() => toggleSection('formatos')}>
-                    <Switch.HiddenInput />
-                    <Switch.Control />
-                    <Switch.Label>Incluir Formatos de impresión</Switch.Label>
-                </Switch.Root>
-
-                {state.formatos.enabled && (
-                    <Field.Root>
-                        <Field.Label>Formatos de impresión</Field.Label>
-                        <Textarea autoresize value={state.formatos.value} onChange={(e) => setSectionValue('formatos', e.target.value)} />
                     </Field.Root>
                 )}
 
