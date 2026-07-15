@@ -13,6 +13,7 @@ export const initialState = {
     gitCommitTitle: { enabled: false, value: "" },
     output: "",
     components: [{ componente: "", version_dll: "", version_ascx: "" }],
+    otherComponents: [{ name: "", type: { label: "", value: "" }, version: "" }],
     changes: [{ description: "", images: [] }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
@@ -82,6 +83,38 @@ function mantisReducer(state, action) {
         case "REMOVE_COMPONENT": {
             const filtered = state.components.filter((_, i) => i !== action.index);
             return { ...state, components: filtered };
+        }
+
+        case "SET_SWITCH_SECTION_VALUE":
+            return {
+                ...state,
+                [action.section]: {
+                    ...state[action.section],
+                    enabled: action.value,
+                },
+            };
+
+        case "UPDATE_OTHER_COMPONENT": {
+            const updated = [...state.otherComponents];
+            updated[action.index] = {
+                ...updated[action.index],
+                [action.key]: action.value,
+            };
+            return { ...state, otherComponents: updated };
+        }
+
+        case "ADD_OTHER_COMPONENT":
+            return {
+                ...state,
+                otherComponents: [
+                    ...state.otherComponents,
+                    { name: "", type: { label: "", value: "" }, version: "" },
+                ],
+            };
+
+        case "REMOVE_OTHER_COMPONENT": {
+            const filtered = state.otherComponents.filter((_, i) => i !== action.index);
+            return { ...state, otherComponents: filtered };
         }
 
         case "RESET":
@@ -178,6 +211,12 @@ export function useMantisForm() {
         dispatch({ type: "UPDATE_COMPONENT", index, key, value });
     const addComponent = () => dispatch({ type: "ADD_COMPONENT" });
     const removeComponent = (index) => dispatch({ type: "REMOVE_COMPONENT", index });
+
+    const updateOtherComponent = (index, key, value) =>
+        dispatch({ type: "UPDATE_OTHER_COMPONENT", index, key, value });
+    const addOtherComponent = () => dispatch({ type: "ADD_OTHER_COMPONENT" });
+    const removeOtherComponent = (index) => dispatch({ type: "REMOVE_OTHER_COMPONENT", index });
+
     const reset = () => dispatch({ type: "RESET" });
 
     const saveProgress = () => {
@@ -251,6 +290,11 @@ export function useMantisForm() {
         updateComponent,
         addComponent,
         removeComponent,
+
+        updateOtherComponent,
+        addOtherComponent,
+        removeOtherComponent,
+        
         reset,
         // Persistence
         saveProgress,

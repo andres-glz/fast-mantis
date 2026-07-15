@@ -181,6 +181,7 @@ export const ChangesSection = ({ changes, setChanges }) => {
               colorPalette="red"
               size="sm"
               mt={6}
+              width="32px"
               disabled={changes.length === 1}
               onClick={() => handleRemoveChange(index)}
               aria-label="Eliminar cambio"
