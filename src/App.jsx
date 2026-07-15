@@ -214,7 +214,7 @@ export const App = () => {
                         <HStack key={index} mb={3} gap={3} alignItems="flex-end">
 
                             <Field.Root flex={2}>
-                                <Field.Label>Nombre</Field.Label>
+                                { index === 0 && <Field.Label>Nombre</Field.Label> }
                                 <Input
                                     value={comp.componente}
                                     placeholder='Nombre de la librería'
@@ -222,7 +222,7 @@ export const App = () => {
                                 />
                             </Field.Root>
                             <Field.Root flex={1}>
-                                <Field.Label>Versión DLL</Field.Label>
+                                { index === 0 && <Field.Label>Versión DLL</Field.Label> }
                                 <Input
                                     placeholder='10.1.4.1'
                                     value={comp.version_dll}
@@ -230,7 +230,7 @@ export const App = () => {
                                 />
                             </Field.Root>
                             <Field.Root flex={1}>
-                                <Field.Label>Versión ASCX</Field.Label>
+                                { index === 0 && <Field.Label>Versión ASCX</Field.Label> }
 
                                 <Input
                                     placeholder='10.1.4.1'
