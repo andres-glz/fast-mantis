@@ -11,7 +11,7 @@ export const OtherComponents = ({ otherComponents, updateOtherComponent, addOthe
                 <Heading size="md" mb={4}>Componentes</Heading>
                 {otherComponents.map((comp, index) => (
                     <HStack key={index} mb={3} gap={3} alignItems="flex-end">
-                        <Field.Root flex={1}>
+                        <Field.Root flex={2}>
                             { index === 0 && <Field.Label>Tipo</Field.Label> }
                             <NativeSelect.Root>
                                 <NativeSelect.Field
@@ -26,12 +26,12 @@ export const OtherComponents = ({ otherComponents, updateOtherComponent, addOthe
                                 <NativeSelect.Indicator />
                             </NativeSelect.Root>
                         </Field.Root>
-                        <Field.Root flex={2}>
+                        <Field.Root flex={3}>
                             { index === 0 && <Field.Label>Nombre</Field.Label> }
                             <Input
-                                value={comp.componente}
+                                value={comp.name}
                                 placeholder='Nombre del componente'
-                                onChange={(e) => updateOtherComponent(index, 'componente', e.target.value)}
+                                onChange={(e) => updateOtherComponent(index, 'name', e.target.value)}
                             />
                         </Field.Root>
                         <Field.Root flex={1}>
