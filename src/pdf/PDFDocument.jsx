@@ -139,19 +139,18 @@ const PDFDocument = ({ data }) => {
                 )}
 
                 {/* Componentes */}
-                { console.log(data.otherComponents) }
                 {data.otherComponents && data.otherComponents.length > 0 && (
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ marginBottom: 6, color: '#CF0E0E', fontSize: 11, fontWeight: 'semibold' }}>Componentes modificados:</Text>
                         <View style={styles.hed}>
-                            <View style={[{ flex: 2 }, styles.cell_lt, styles.cell, styles.cell_color]}><Text>Tipo</Text></View>
-                            <View style={[{ flex: 1 }, styles.cell_t, styles.cell, styles.cell_color]}><Text>Nombre</Text></View>
+                            <View style={[{ flex: 1 }, styles.cell_lt, styles.cell, styles.cell_color]}><Text>Tipo</Text></View>
+                            <View style={[{ flex: 2 }, styles.cell_t, styles.cell, styles.cell_color]}><Text>Nombre</Text></View>
                             <View style={[{ flex: 1 }, styles.cell_t, styles.cell, styles.cell_color]}><Text>Versión</Text></View>
                         </View>
                         {data.otherComponents.map((c, i) => (
                             <View key={i} style={styles.hed}>
-                                <View style={[{ flex: 2 }, styles.cell_l, styles.cell]}><Text>{c.type.value}</Text></View>
-                                <View style={[{ flex: 1 }, styles.cell]}><Text>{c.name.trim() !== "" ? c.name : "-"}</Text></View>
+                                <View style={[{ flex: 1 }, styles.cell_l, styles.cell]}><Text>{c.type.label}</Text></View>
+                                <View style={[{ flex: 2 }, styles.cell]}><Text>{c.name.trim() !== "" ? c.name : "-"}</Text></View>
                                 <View style={[{ flex: 1 }, styles.cell]}><Text>{c.version.trim() !== "" ? c.version : "-"}</Text></View>
                             </View>
                         ))}

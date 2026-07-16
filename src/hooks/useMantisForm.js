@@ -245,16 +245,16 @@ export function useMantisForm() {
                 .map((c) => ({
                     original: c,
                     componente: c.componente,
-                    version_dll: "10.1." + c.version_dll,
-                    version_ascx: "10.1." + c.version_ascx,
-                    version: `DLL: 10.1.${c.version_dll || "X.X"}${c.version_ascx ? ", ASCX: 10.1." + c.version_ascx : ""}`,
+                    version_dll: c.version_dll,
+                    version_ascx: c.version_ascx,
+                    version: `DLL: ${c.version_dll || "X.X"}${c.version_ascx ? ", ASCX: " + c.version_ascx : ""}`,
                 })),
 
             reglasNegocio: state.components
                 .filter((c) => c.version_dll.trim() !== "")
                 .map(
                     (c) =>
-                        `- ${c.componente}.dll (Versión: 10.1.${c.version_dll})`,
+                        `- ${c.componente}.dll (Versión: ${c.version_dll})`,
                 )
                 .join("\n"),
 
@@ -262,7 +262,7 @@ export function useMantisForm() {
                 .filter((c) => c.version_ascx.trim() !== "")
                 .map(
                     (c) =>
-                        `- ${c.componente}.ascx (Versión: 10.1.${c.version_ascx})`,
+                        `- ${c.componente}.ascx (Versión: ${c.version_ascx})`,
                 )
                 .join("\n"),
             
