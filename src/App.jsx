@@ -3,7 +3,7 @@ import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switc
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { LuCheck, LuCopy } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText } from 'lucide-react'
+import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText, Plus } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
@@ -21,7 +21,11 @@ import { useMantisForm } from './hooks/useMantisForm'
 
 //CONSTANTES
 import { TIPOS_MANTIS } from './constants/TIPOS_MANTIS'
+import { LIBRARIES } from './constants/LIBRARIES.js'
 import { generateMarkdown } from './generators/generateMarkdown'
+import { OtherComponents } from './sections/OtherComponents'
+
+const librarySuggestions = [...new Set(LIBRARIES)]
 
 export const App = () => {
     const {
@@ -33,6 +37,11 @@ export const App = () => {
         updateComponent,
         addComponent,
         removeComponent,
+
+        updateOtherComponent,
+        addOtherComponent,
+        removeOtherComponent,
+
         reset,
         saveProgress,
         obtenerDatos,
@@ -90,14 +99,14 @@ export const App = () => {
 
     function generateCommitTitle() {
         const data = obtenerDatos();
-        
+
         const feat = TIPOS_MANTIS.find(t => t.title === data.tipoMantis)?.value || 'feat';
         const sprint = data.sprintEnabled ? `S${data.sprint}` : data.components.length > 0 ? `${data.components[0].componente || ''}` : '';
         const mantis = data.wp ? `WP-${data.wp}` : '';
         const jira = data.jira || mantis || '';
         const jiraPrefix = jira ? `[${jira}] ` : '';
-        const title = data.jiraTitle || data.brief || data.title || '';
-        
+        const title = data.jiraTitle || data.brief || '';
+
         return `${feat}(${sprint}): ${jiraPrefix}${title}`;
     }
 
@@ -145,7 +154,7 @@ export const App = () => {
 
             <Stack gap={4}>
                 <HStack gap={4}>
-                    <Field.Root>
+                    <Field.Root flex={2}>
                         <Field.Label>Mantis</Field.Label>
                         <Input
                             placeholder='30000'
@@ -154,7 +163,7 @@ export const App = () => {
                             onChange={(e) => setField('mantis', e.target.value.slice(0, 5))}
                         />
                     </Field.Root>
-                    <Field.Root>
+                    <Field.Root flex={2}>
                         <Field.Label>Jira</Field.Label>
                         <Input
                             placeholder='TL-0000'
@@ -162,9 +171,17 @@ export const App = () => {
                             onChange={(e) => setField('jira', e.target.value)}
                         />
                     </Field.Root>
-                    <Field.Root>
+                    <Field.Root flex={1}>
+                        <Field.Label>Sprint</Field.Label>
+                        <Input
+                            placeholder='00'
+                            value={state.sprint.value}
+                            onChange={(e) => setSectionValue('sprint', e.target.value)}
+                        />
+                    </Field.Root>
+                    <Field.Root flex={3}>
                         <Field.Label>Tipo</Field.Label>
-                        <NativeSelect.Root>
+                        <NativeSelect.Root variant='subtle'>
                             <NativeSelect.Field
                                 placeholder="Seleccionar tipo de mantis"
                                 value={state.tipoMantis}
@@ -180,56 +197,52 @@ export const App = () => {
                 </HStack>
 
                 <Field.Root>
-                    <Field.Label>Mantis Title</Field.Label>
-                    <Input value={state.title} onChange={(e) => setField('title', e.target.value)} />
-                </Field.Root>
-
-                <Field.Root>
-                    <Field.Label>Jira Title</Field.Label>
-                    <Input value={state.jiraTitle} onChange={(e) => setField('jiraTitle', e.target.value)} />
+                    <Field.Label>Título (Jira/Mantis)</Field.Label>
+                    <Input variant="subtle" value={state.jiraTitle} onChange={(e) => setField('jiraTitle', e.target.value)} />
                 </Field.Root>
 
                 <Field.Root>
                     <Field.Label>Descripción corta</Field.Label>
-                    <Input value={state.brief} onChange={(e) => setField('brief', e.target.value)} />
+                    <Input variant="subtle" value={state.brief} onChange={(e) => setField('brief', e.target.value)} />
                 </Field.Root>
 
-                <Box borderWidth="1px" borderRadius="md" p={4}>
-                    <Heading size="md" mb={4}>Componentes</Heading>
+                <Box borderWidth="1px" borderRadius="md" p={4} mt={2}>
+                    <Heading size="md" mb={4}>Librerías</Heading>
                     {state.components.map((comp, index) => (
                         <HStack key={index} mb={3} gap={3} alignItems="flex-end">
+
                             <Field.Root flex={2}>
-                                <Field.Label>Nombre del componente</Field.Label>
-                                <Input
+                                { index === 0 && <Field.Label>Nombre</Field.Label> }
+                                <Input variant="flushed"
                                     value={comp.componente}
+                                    list="library-suggestions"
+                                    placeholder='Nombre de la librería'
                                     onChange={(e) => updateComponent(index, 'componente', e.target.value)}
                                 />
                             </Field.Root>
                             <Field.Root flex={1}>
-                                <Field.Label>Versión DLL</Field.Label>
-                                <InputGroup startElement="10.1.">
-                                    <Input
-                                        placeholder='41.1'
-                                        value={comp.version_dll}
-                                        onChange={(e) => updateComponent(index, 'version_dll', e.target.value)}
-                                    />
-                                </InputGroup>
+                                { index === 0 && <Field.Label>Versión DLL</Field.Label> }
+                                <Input variant="flushed"
+                                    placeholder='10.1.4.1'
+                                    value={comp.version_dll}
+                                    onChange={(e) => updateComponent(index, 'version_dll', e.target.value)}
+                                />
                             </Field.Root>
                             <Field.Root flex={1}>
-                                <Field.Label>Versión ASCX</Field.Label>
-                                <InputGroup startElement="10.1.">
-                                    <Input
-                                        placeholder='41.1'
-                                        value={comp.version_ascx}
-                                        onChange={(e) => updateComponent(index, 'version_ascx', e.target.value)}
-                                    />
-                                </InputGroup>
+                                { index === 0 && <Field.Label>Versión ASCX</Field.Label> }
+
+                                <Input variant="flushed"
+                                    placeholder='10.1.4.1'
+                                    value={comp.version_ascx}
+                                    onChange={(e) => updateComponent(index, 'version_ascx', e.target.value)}
+                                />
                             </Field.Root>
                             <Button
                                 variant="ghost"
                                 colorPalette="red"
                                 size="sm"
                                 mb={1}
+                                width="32px"
                                 disabled={state.components.length === 1}
                                 onClick={() => removeComponent(index)}
                                 aria-label="Eliminar componente"
@@ -238,23 +251,22 @@ export const App = () => {
                             </Button>
                         </HStack>
                     ))}
+                    <datalist id="library-suggestions">
+                        {librarySuggestions.map((library) => (
+                            <option key={library} value={library} />
+                        ))}
+                    </datalist>
+                    <Flex justifyContent="flex-end">
+                        <Button onClick={addComponent} variant={'outline'}><Plus />Agregar</Button>
+                    </Flex>
                 </Box>
-                <Flex justifyContent="flex-end">
-                    <Button onClick={addComponent} variant={'outline'}>Agregar componente</Button>
-                </Flex>
 
-                <Switch.Root checked={state.sprint.enabled} onCheckedChange={() => toggleSection('sprint')}>
-                    <Switch.HiddenInput />
-                    <Switch.Control />
-                    <Switch.Label>Incluir Sprint</Switch.Label>
-                </Switch.Root>
-
-                {state.sprint.enabled && (
-                    <Field.Root>
-                        <Field.Label>Sprint</Field.Label>
-                        <Input type='number' max={99} min={0} value={state.sprint.value} onChange={(e) => setSectionValue('sprint', Number(e.target.value))} />
-                    </Field.Root>
-                )}
+                <OtherComponents
+                    updateOtherComponent={updateOtherComponent}
+                    addOtherComponent={addOtherComponent}
+                    removeOtherComponent={removeOtherComponent}
+                    otherComponents={state.otherComponents}
+                />
 
                 <ChangesSection changes={state.changes} setChanges={(v) => setField('changes', v)} />
 
@@ -297,33 +309,6 @@ export const App = () => {
                     </Field.Root>
                 )}
 
-
-                <Switch.Root checked={state.templates.enabled} onCheckedChange={() => toggleSection('templates')}>
-                    <Switch.HiddenInput />
-                    <Switch.Control />
-                    <Switch.Label>Incluir Templates</Switch.Label>
-                </Switch.Root>
-
-                {state.templates.enabled && (
-                    <Field.Root>
-                        <Field.Label>Templates</Field.Label>
-                        <Textarea autoresize value={state.templates.value} onChange={(e) => setSectionValue('templates', e.target.value)} />
-                    </Field.Root>
-                )}
-
-                <Switch.Root checked={state.formatos.enabled} onCheckedChange={() => toggleSection('formatos')}>
-                    <Switch.HiddenInput />
-                    <Switch.Control />
-                    <Switch.Label>Incluir Formatos de impresión</Switch.Label>
-                </Switch.Root>
-
-                {state.formatos.enabled && (
-                    <Field.Root>
-                        <Field.Label>Formatos de impresión</Field.Label>
-                        <Textarea autoresize value={state.formatos.value} onChange={(e) => setSectionValue('formatos', e.target.value)} />
-                    </Field.Root>
-                )}
-
                 <Switch.Root checked={state.ticket.enabled} onCheckedChange={() => toggleSection('ticket')}>
                     <Switch.HiddenInput />
                     <Switch.Control />
@@ -361,7 +346,7 @@ export const App = () => {
                     <Button variant={isSaved ? 'plain' : 'ghost'} onClick={handleSave}>
                         {isSaved ? <LuCheck /> : <Save />}
                     </Button>
-                    
+
                 </Flex>
 
                 {state.gitCommitTitle.enabled && (

@@ -1,4 +1,5 @@
-import { translateToEnglish } from '../utils/translate';
+import { translateToEnglish } from "../utils/translate";
+import { TYPES_COMPONENTS } from "../constants/COMPONENT_TYPES.js";
 
 /**
  * @param {object} data - Result of obtenerDatos()
@@ -18,38 +19,48 @@ Changes:
 - Add "Receta Repetitiva" option to the Verification Checklist at ending medical appointment
  */
 export async function generateCommitGit(data) {
-    const mantis = data.wp ? `WP-${data.wp}` : '';
-    const jira = data.jira || mantis || '';
-    const jiraPrefix = jira ? `[${jira}] ` : '';
-    const title = data.jiraTitle || data.brief || data.title || '';
-
-    let commit = '';
+    let commit = "";
     if (data.jira) {
-        commit += `Ticket: ${data.jira}\n`;
+        commit += `Ticket: ${data.jira}`;
     }
     if (data.wp) {
-         commit += `Mantis: WP-${data.wp}\n`;
+        if (commit) commit += `\n`;
+        commit += `Mantis: WP-${data.wp}`;
     }
-    
+
     if (data.reglasNegocio.length > 0) {
-        commit += `\nBR:\n${data.reglasNegocio}\n`;
+        if (commit) commit += `\n\n`;
+        commit += `BR:\n${data.reglasNegocio}`;
     }
-    
+
     if (data.vistas.length > 0) {
-        commit += `\nViews:\n${data.vistas}\n`;
+        if (commit) commit += `\n\n`;
+        commit += `Views:\n${data.vistas}`;
     }
-    
-    if (data.templates.enabled) {
-        commit += `\nTemplates:\n${data.templates.value}\n`;
-    }
-    
-    if (data.formatos.enabled) {
-        commit += `\nFormatos de impresión:\n${data.formatos.value}\n`;
-    }
-    
+
+    (TYPES_COMPONENTS || []).forEach((componentType) => {
+        const items = (data.otherComponents || []).filter((c) => {
+            const componentName = (c?.name || "").trim();
+            return (
+                c?.type?.value === componentType.value && componentName !== ""
+            );
+        });
+
+        if (items.length === 0) return;
+
+        commit += `\n\n${componentType.label}:`;
+        commit += items
+            .map((c) => {
+                const componentName = (c?.name || "").trim();
+                const version = (c?.version || "").trim();
+                return `\n- ${componentName}${version ? ` (Versión: ${version})` : ""}`;
+            })
+            .join("");
+    });
+
     const cambiosEnIngles = await translateToEnglish(data.cambios);
 
-    commit += `\nChanges:\n`;
+    commit += `\n\nChanges:\n`;
     commit += cambiosEnIngles;
 
     return commit;

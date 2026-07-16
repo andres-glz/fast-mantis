@@ -5,7 +5,7 @@
  */
 export function generateCommit(data) {
     let commit = `[${data.commitTitle}] ${data.brief}\n`;
-    commit += `\n${data.title}`;
+    commit += `\n${data.jiraTitle}`;
     commit += `\n${data.mantisUrl}`;
     commit += `\n-----------------------------------------------------------------`;
     commit += `\nTipo: ${data.tipoMantis}`;
@@ -44,12 +44,6 @@ export function generateCommit(data) {
     }
     if (data.vistas.length > 0) {
         commit += `\n\nVistas:\n${data.vistas}`;
-    }
-    if (data.templates.enabled) {
-        commit += `\n\nTemplates:\n${data.templates.value}`;
-    }
-    if (data.formatos.enabled) {
-        commit += `\n\nFormatos de impresión:\n${data.formatos.value}`;
     }
 
     commit += `\n-----------------------------------------------------------------`;

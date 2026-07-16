@@ -6,22 +6,20 @@ import { useReducer, useEffect } from "react";
 export const initialState = {
     mantis: "",
     tipoMantis: "",
-    title: "",
     brief: "",
     jira: "",
     jiraTitle: "",
     gitCommitTitle: { enabled: false, value: "" },
     output: "",
     components: [{ componente: "", version_dll: "", version_ascx: "" }],
+    otherComponents: [{ name: "", type: { label: "", value: "" }, version: "" }],
     changes: [{ description: "", images: [] }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
-    sprint: { enabled: true, value: 43 },
+    sprint: { enabled: true, value: 44 },
     porque: { enabled: false, value: "" },
     como: { enabled: false, value: "" },
     impacto: { enabled: false, value: "" },
-    templates: { enabled: false, value: "" },
-    formatos: { enabled: false, value: "" },
     ticket: { enabled: false, value: "" },
     evidencias: { enabled: false, value: "" },
 };
@@ -84,6 +82,38 @@ function mantisReducer(state, action) {
             return { ...state, components: filtered };
         }
 
+        case "SET_SWITCH_SECTION_VALUE":
+            return {
+                ...state,
+                [action.section]: {
+                    ...state[action.section],
+                    enabled: action.value,
+                },
+            };
+
+        case "UPDATE_OTHER_COMPONENT": {
+            const updated = [...state.otherComponents];
+            updated[action.index] = {
+                ...updated[action.index],
+                [action.key]: action.value,
+            };
+            return { ...state, otherComponents: updated };
+        }
+
+        case "ADD_OTHER_COMPONENT":
+            return {
+                ...state,
+                otherComponents: [
+                    ...state.otherComponents,
+                    { name: "", type: { label: "", value: "" }, version: "" },
+                ],
+            };
+
+        case "REMOVE_OTHER_COMPONENT": {
+            const filtered = state.otherComponents.filter((_, i) => i !== action.index);
+            return { ...state, otherComponents: filtered };
+        }
+
         case "RESET":
             return initialState;
 
@@ -107,13 +137,16 @@ function fromStoredData(raw) {
         ...initialState,
         mantis: raw.mantis || "",
         tipoMantis: raw.tipoMantis || "",
-        title: raw.title || "",
         brief: raw.brief || "",
         output: raw.output || "",
         components:
             raw.components?.length > 0
                 ? raw.components
                 : initialState.components,
+        otherComponents:
+            raw.otherComponents?.length > 0
+                ? raw.otherComponents
+                : initialState.otherComponents,
         changes: (raw.changes || []).map((c) => ({
             ...c,
             images: Array.isArray(c.images)
@@ -129,14 +162,6 @@ function fromStoredData(raw) {
         porque: { enabled: raw.usaPorque ?? false, value: raw.porque ?? "" },
         como: { enabled: raw.usaComo ?? false, value: raw.como ?? "" },
         impacto: { enabled: raw.usaImpacto ?? false, value: raw.impacto ?? "" },
-        templates: {
-            enabled: raw.usaTemplates ?? false,
-            value: raw.templates ?? "",
-        },
-        formatos: {
-            enabled: raw.usaFormatos ?? false,
-            value: raw.formatos ?? "",
-        },
         ticket: { enabled: raw.usaTicket ?? false, value: raw.ticket ?? "" },
         evidencias: {
             enabled: raw.usaEvidencias ?? false,
@@ -178,6 +203,12 @@ export function useMantisForm() {
         dispatch({ type: "UPDATE_COMPONENT", index, key, value });
     const addComponent = () => dispatch({ type: "ADD_COMPONENT" });
     const removeComponent = (index) => dispatch({ type: "REMOVE_COMPONENT", index });
+
+    const updateOtherComponent = (index, key, value) =>
+        dispatch({ type: "UPDATE_OTHER_COMPONENT", index, key, value });
+    const addOtherComponent = () => dispatch({ type: "ADD_OTHER_COMPONENT" });
+    const removeOtherComponent = (index) => dispatch({ type: "REMOVE_OTHER_COMPONENT", index });
+
     const reset = () => dispatch({ type: "RESET" });
 
     const saveProgress = () => {
@@ -198,13 +229,12 @@ export function useMantisForm() {
             mantis: state.mantis || "3XXXX",
             wp: state.mantis,
             mantisUrl: `https://mantis.tca.com/assist/view.php?id=${state.mantis || "3XXXX"}`,
-            title: state.title || "Título del Mantis",
             tipoMantis: tipo,
             jira: state.jira,
             brief: state.brief || "Descripción corta del cambio",
             commitTitle,
             sprint: state.sprint.value,
-            sprintEnabled: state.sprint.enabled,
+            sprintEnabled: state.sprint.value !== "",
             jiraTitle: state.jiraTitle,
 
             componentes: state.components
@@ -212,16 +242,16 @@ export function useMantisForm() {
                 .map((c) => ({
                     original: c,
                     componente: c.componente,
-                    version_dll: "10.1." + c.version_dll,
-                    version_ascx: "10.1." + c.version_ascx,
-                    version: `DLL: 10.1.${c.version_dll || "X.X"}${c.version_ascx ? ", ASCX: 10.1." + c.version_ascx : ""}`,
+                    version_dll: c.version_dll,
+                    version_ascx: c.version_ascx,
+                    version: `DLL: ${c.version_dll || "X.X"}${c.version_ascx ? ", ASCX: " + c.version_ascx : ""}`,
                 })),
 
             reglasNegocio: state.components
                 .filter((c) => c.version_dll.trim() !== "")
                 .map(
                     (c) =>
-                        `- ${c.componente}.dll (Versión: 10.1.${c.version_dll})`,
+                        `- ${c.componente}.dll (Versión: ${c.version_dll})`,
                 )
                 .join("\n"),
 
@@ -229,7 +259,7 @@ export function useMantisForm() {
                 .filter((c) => c.version_ascx.trim() !== "")
                 .map(
                     (c) =>
-                        `- ${c.componente}.ascx (Versión: 10.1.${c.version_ascx})`,
+                        `- ${c.componente}.ascx (Versión: ${c.version_ascx})`,
                 )
                 .join("\n"),
             
@@ -251,6 +281,11 @@ export function useMantisForm() {
         updateComponent,
         addComponent,
         removeComponent,
+
+        updateOtherComponent,
+        addOtherComponent,
+        removeOtherComponent,
+        
         reset,
         // Persistence
         saveProgress,
