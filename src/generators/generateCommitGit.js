@@ -19,11 +19,6 @@ Changes:
 - Add "Receta Repetitiva" option to the Verification Checklist at ending medical appointment
  */
 export async function generateCommitGit(data) {
-    const mantis = data.wp ? `WP-${data.wp}` : "";
-    const jira = data.jira || mantis || "";
-    const jiraPrefix = jira ? `[${jira}] ` : "";
-    const title = data.jiraTitle || data.brief || data.title || "";
-
     let commit = "";
     if (data.jira) {
         commit += `Ticket: ${data.jira}`;

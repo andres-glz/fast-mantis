@@ -80,7 +80,7 @@ const PDFDocument = ({ data }) => {
                             <Text>Título</Text>
                         </View>
                         <View style={[{ flex: 1 }, styles.cell]}>
-                            <Text>{data.title}</Text>
+                            <Text>{data.jiraTitle}</Text>
                         </View>
                     </View>
                     <View style={styles.hed}>

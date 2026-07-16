@@ -5,7 +5,7 @@
  */
 export function generateCommit(data) {
     let commit = `[${data.commitTitle}] ${data.brief}\n`;
-    commit += `\n${data.title}`;
+    commit += `\n${data.jiraTitle}`;
     commit += `\n${data.mantisUrl}`;
     commit += `\n-----------------------------------------------------------------`;
     commit += `\nTipo: ${data.tipoMantis}`;

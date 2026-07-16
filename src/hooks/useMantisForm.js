@@ -6,7 +6,6 @@ import { useReducer, useEffect } from "react";
 export const initialState = {
     mantis: "",
     tipoMantis: "",
-    title: "",
     brief: "",
     jira: "",
     jiraTitle: "",
@@ -17,7 +16,7 @@ export const initialState = {
     changes: [{ description: "", images: [] }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
-    sprint: { enabled: true, value: 43 },
+    sprint: { enabled: true, value: 44 },
     porque: { enabled: false, value: "" },
     como: { enabled: false, value: "" },
     impacto: { enabled: false, value: "" },
@@ -138,7 +137,6 @@ function fromStoredData(raw) {
         ...initialState,
         mantis: raw.mantis || "",
         tipoMantis: raw.tipoMantis || "",
-        title: raw.title || "",
         brief: raw.brief || "",
         output: raw.output || "",
         components:
@@ -231,13 +229,12 @@ export function useMantisForm() {
             mantis: state.mantis || "3XXXX",
             wp: state.mantis,
             mantisUrl: `https://mantis.tca.com/assist/view.php?id=${state.mantis || "3XXXX"}`,
-            title: state.title || "Título del Mantis",
             tipoMantis: tipo,
             jira: state.jira,
             brief: state.brief || "Descripción corta del cambio",
             commitTitle,
             sprint: state.sprint.value,
-            sprintEnabled: state.sprint.enabled,
+            sprintEnabled: state.sprint.value !== "",
             jiraTitle: state.jiraTitle,
 
             componentes: state.components

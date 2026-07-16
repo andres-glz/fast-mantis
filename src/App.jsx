@@ -105,7 +105,7 @@ export const App = () => {
         const mantis = data.wp ? `WP-${data.wp}` : '';
         const jira = data.jira || mantis || '';
         const jiraPrefix = jira ? `[${jira}] ` : '';
-        const title = data.jiraTitle || data.brief || data.title || '';
+        const title = data.jiraTitle || data.brief || '';
 
         return `${feat}(${sprint}): ${jiraPrefix}${title}`;
     }
@@ -176,7 +176,7 @@ export const App = () => {
                         <Input
                             placeholder='00'
                             value={state.sprint.value}
-                            onChange={(e) => setField('sprint', e.target.value)}
+                            onChange={(e) => setSectionValue('sprint', e.target.value)}
                         />
                     </Field.Root>
                     <Field.Root flex={3}>
@@ -197,12 +197,7 @@ export const App = () => {
                 </HStack>
 
                 <Field.Root>
-                    <Field.Label>Mantis Title</Field.Label>
-                    <Input variant="subtle" value={state.title} onChange={(e) => setField('title', e.target.value)} />
-                </Field.Root>
-
-                <Field.Root>
-                    <Field.Label>Jira Title</Field.Label>
+                    <Field.Label>Título (Jira/Mantis)</Field.Label>
                     <Input variant="subtle" value={state.jiraTitle} onChange={(e) => setField('jiraTitle', e.target.value)} />
                 </Field.Root>
 
