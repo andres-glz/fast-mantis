@@ -3,13 +3,30 @@ import { Box, Heading, HStack, Button, Input, InputGroup, Field, NativeSelect, F
 import { Plus, X } from 'lucide-react'
 //CONSTANTES
 import { TYPES_COMPONENTS } from '../constants/COMPONENT_TYPES'
+import { PRINT_FORMATS } from '../constants/PRINT_FORMATS'
+import { STORE_PROCEDURES } from '../constants/STORE_PROCEDURES'
+import { TEMPLATES } from '../constants/TEMPLATES'
+
+const SUGGESTIONS_BY_TYPE = {
+    formato_impresion: [...new Set(PRINT_FORMATS)],
+    store_procedure: [...new Set(STORE_PROCEDURES)],
+    template: [...new Set(TEMPLATES)],
+}
+
+function getSuggestionsForType(type) {
+    return SUGGESTIONS_BY_TYPE[type] || []
+}
 
 export const OtherComponents = ({ otherComponents, updateOtherComponent, addOtherComponent, removeOtherComponent }) => {
     return (
         <>
             <Box borderWidth="1px" borderRadius="md" p={4}>
                 <Heading size="md" mb={4}>Componentes</Heading>
-                {otherComponents.map((comp, index) => (
+                {otherComponents.map((comp, index) => {
+                    const suggestions = getSuggestionsForType(comp.type?.value)
+                    const datalistId = `other-component-suggestions-${index}`
+
+                    return (
                     <HStack key={index} mb={3} gap={3} alignItems="flex-end">
                         <Field.Root flex={2}>
                             { index === 0 && <Field.Label>Tipo</Field.Label> }
@@ -30,9 +47,17 @@ export const OtherComponents = ({ otherComponents, updateOtherComponent, addOthe
                             { index === 0 && <Field.Label>Nombre</Field.Label> }
                             <Input
                                 value={comp.name}
+                                list={suggestions.length > 0 ? datalistId : undefined}
                                 placeholder='Nombre del componente'
                                 onChange={(e) => updateOtherComponent(index, 'name', e.target.value)}
                             />
+                            {suggestions.length > 0 && (
+                                <datalist id={datalistId}>
+                                    {suggestions.map((suggestion) => (
+                                        <option key={suggestion} value={suggestion} />
+                                    ))}
+                                </datalist>
+                            )}
                         </Field.Root>
                         <Field.Root flex={1}>
                             { index === 0 && <Field.Label>Versión</Field.Label> }
@@ -55,7 +80,8 @@ export const OtherComponents = ({ otherComponents, updateOtherComponent, addOthe
                             <X />
                         </Button>
                     </HStack>
-                ))}
+                    )
+                })}
                 <Flex justifyContent="flex-end">
                     <Button onClick={addOtherComponent} variant={'outline'}><Plus /> Agregar</Button>
                 </Flex>

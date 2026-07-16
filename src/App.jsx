@@ -21,8 +21,11 @@ import { useMantisForm } from './hooks/useMantisForm'
 
 //CONSTANTES
 import { TIPOS_MANTIS } from './constants/TIPOS_MANTIS'
+import { LIBRARIES } from './constants/LIBRARIES.js'
 import { generateMarkdown } from './generators/generateMarkdown'
 import { OtherComponents } from './sections/OtherComponents'
+
+const librarySuggestions = [...new Set(LIBRARIES)]
 
 export const App = () => {
     const {
@@ -217,6 +220,7 @@ export const App = () => {
                                 { index === 0 && <Field.Label>Nombre</Field.Label> }
                                 <Input
                                     value={comp.componente}
+                                    list="library-suggestions"
                                     placeholder='Nombre de la librería'
                                     onChange={(e) => updateComponent(index, 'componente', e.target.value)}
                                 />
@@ -252,6 +256,11 @@ export const App = () => {
                             </Button>
                         </HStack>
                     ))}
+                    <datalist id="library-suggestions">
+                        {librarySuggestions.map((library) => (
+                            <option key={library} value={library} />
+                        ))}
+                    </datalist>
                     <Flex justifyContent="flex-end">
                         <Button onClick={addComponent} variant={'outline'}><Plus />Agregar</Button>
                     </Flex>
