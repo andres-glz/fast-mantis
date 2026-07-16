@@ -2,7 +2,7 @@ import { Button, Field, Flex, Heading, HStack, Text, Textarea, VStack } from '@c
 import { GripVertical, ImageUp, X } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-const PasteArea = ({ index, change, handlePaste, handleRemoveImage }) => {
+const PasteArea = ({ index, change, handlePaste, handleRemoveImage, handlePreviewImage }) => {
   const [focused, setFocused] = useState(false);
   const areaRef = useRef(null);
   const hasImages = change.images && change.images.length > 0;
@@ -45,8 +45,44 @@ const PasteArea = ({ index, change, handlePaste, handleRemoveImage }) => {
       {hasImages && (
         <Flex gap={3} flexWrap="wrap" justify="center">
           {change.images.map((src, imgIndex) => (
-            <div key={imgIndex} style={{ position: 'relative', display: 'inline-block', borderRadius: '6px', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.15)' }}>
-              <img src={src} alt={`Preview ${imgIndex + 1}`} style={{ maxWidth: '180px', maxHeight: '160px', display: 'block', objectFit: 'cover' }} />
+            <div
+              key={imgIndex}
+              style={{
+                position: 'relative',
+                display: 'inline-block',
+                borderRadius: '6px',
+                overflow: 'hidden',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+                border: '1px solid #3b82f6',
+                cursor: 'pointer',
+                transition: 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1)',
+                transformOrigin: 'center center',
+                willChange: 'transform',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px) scale(1.045)';
+                e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.22)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.15)';
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => handlePreviewImage(src, `Preview ${imgIndex + 1}`)}
+                style={{
+                  display: 'block',
+                  padding: 0,
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'zoom-in',
+                }}
+                
+                aria-label={`Ver imagen ${imgIndex + 1} en grande`}
+              >
+                <img src={src} alt={`Preview ${imgIndex + 1}`} style={{ maxWidth: '180px', maxHeight: '160px', display: 'block', objectFit: 'cover' }} />
+              </button>
               <Button
                 size="xs"
                 variant="solid"
@@ -66,6 +102,19 @@ export const ChangesSection = ({ changes, setChanges }) => {
   const dragIndex = useRef(null);
   const itemRefs = useRef([]);
   const [draggingOver, setDraggingOver] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setPreviewImage(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleDragStart = (index) => {
     dragIndex.current = index;
@@ -134,8 +183,13 @@ export const ChangesSection = ({ changes, setChanges }) => {
     setChanges(changes.filter((_, i) => i !== index));
   };
 
+  const handlePreviewImage = (src, alt) => {
+    setPreviewImage({ src, alt });
+  };
+
   return (
-    <Flex borderWidth="1px" borderRadius="md" p={4} gap={6} flexDirection={'column'}>
+    <>
+      <Flex borderWidth="1px" borderRadius="md" p={4} gap={6} flexDirection={'column'}>
       <Heading size="md" mb={2}>Cambios realizados</Heading>
 
       {changes.map((change, index) => (
@@ -189,12 +243,70 @@ export const ChangesSection = ({ changes, setChanges }) => {
               <X />
             </Button>
           </HStack>
-          <PasteArea index={index} change={change} handlePaste={handlePaste} handleRemoveImage={handleRemoveImage} />
+          <PasteArea
+            index={index}
+            change={change}
+            handlePaste={handlePaste}
+            handleRemoveImage={handleRemoveImage}
+            handlePreviewImage={handlePreviewImage}
+          />
         </VStack>
       ))}
       <Flex justifyContent="flex-end">
         <Button onClick={() => setChanges([...changes, { description: "", images: [] }])} variant={'outline'}>Agregar cambio</Button>
       </Flex>
-    </Flex>
+      </Flex>
+
+      {previewImage && (
+        <Flex
+          position="fixed"
+          inset={0}
+          zIndex={1400}
+          align="center"
+          justify="center"
+          bg="rgba(0, 0, 0, 0.72)"
+          p={4}
+          onClick={() => setPreviewImage(null)}
+        >
+          <Flex
+            position="relative"
+            maxW="92vw"
+            maxH="92vh"
+            bg="white"
+            borderRadius="xl"
+            borderWidth="1px"
+            borderColor="blue.600"
+            boxShadow="2xl"
+            onClick={(e) => e.stopPropagation()}
+            direction="column"
+            gap={3}
+          >
+            <Button
+              position="absolute"
+              top={2}
+              right={2}
+              size="sm"
+              variant='subtle'
+              colorPalette="blue"
+              onClick={() => setPreviewImage(null)}
+              aria-label="Cerrar vista previa"
+            >
+              <X />
+            </Button>
+            <img
+              src={previewImage.src}
+              alt={previewImage.alt}
+              style={{
+                display: 'block',
+                maxWidth: 'min(92vw, 1100px)',
+                maxHeight: '82vh',
+                objectFit: 'contain',
+                borderRadius: '12px',
+              }}
+            />
+          </Flex>
+        </Flex>
+      )}
+    </>
   )
 }
