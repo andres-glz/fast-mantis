@@ -20,7 +20,7 @@ function getSuggestionsForType(type) {
 export const OtherComponents = ({ otherComponents, updateOtherComponent, addOtherComponent, removeOtherComponent }) => {
     return (
         <>
-            <Box borderWidth="1px" borderRadius="md" p={4}>
+            <Box borderWidth="1px" borderRadius="md" p={4} mt={2}>
                 <Heading size="md" mb={4}>Componentes</Heading>
                 {otherComponents.map((comp, index) => {
                     const suggestions = getSuggestionsForType(comp.type?.value)
@@ -30,7 +30,7 @@ export const OtherComponents = ({ otherComponents, updateOtherComponent, addOthe
                     <HStack key={index} mb={3} gap={3} alignItems="flex-end">
                         <Field.Root flex={2}>
                             { index === 0 && <Field.Label>Tipo</Field.Label> }
-                            <NativeSelect.Root>
+                            <NativeSelect.Root variant='subtle'>
                                 <NativeSelect.Field
                                     placeholder="Seleccionar tipo"
                                     value={comp.type?.value || ""}
@@ -45,7 +45,7 @@ export const OtherComponents = ({ otherComponents, updateOtherComponent, addOthe
                         </Field.Root>
                         <Field.Root flex={3}>
                             { index === 0 && <Field.Label>Nombre</Field.Label> }
-                            <Input
+                            <Input variant="flushed"
                                 value={comp.name}
                                 list={suggestions.length > 0 ? datalistId : undefined}
                                 placeholder='Nombre del componente'
@@ -61,7 +61,7 @@ export const OtherComponents = ({ otherComponents, updateOtherComponent, addOthe
                         </Field.Root>
                         <Field.Root flex={1}>
                             { index === 0 && <Field.Label>Versión</Field.Label> }
-                            <Input
+                            <Input variant="flushed"
                                 placeholder='1.0.0'
                                 value={comp.version}
                                 onChange={(e) => updateOtherComponent(index, 'version', e.target.value)}

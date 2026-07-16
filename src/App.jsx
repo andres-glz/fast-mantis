@@ -181,7 +181,7 @@ export const App = () => {
                     </Field.Root>
                     <Field.Root flex={3}>
                         <Field.Label>Tipo</Field.Label>
-                        <NativeSelect.Root>
+                        <NativeSelect.Root variant='subtle'>
                             <NativeSelect.Field
                                 placeholder="Seleccionar tipo de mantis"
                                 value={state.tipoMantis}
@@ -198,27 +198,27 @@ export const App = () => {
 
                 <Field.Root>
                     <Field.Label>Mantis Title</Field.Label>
-                    <Input value={state.title} onChange={(e) => setField('title', e.target.value)} />
+                    <Input variant="subtle" value={state.title} onChange={(e) => setField('title', e.target.value)} />
                 </Field.Root>
 
                 <Field.Root>
                     <Field.Label>Jira Title</Field.Label>
-                    <Input value={state.jiraTitle} onChange={(e) => setField('jiraTitle', e.target.value)} />
+                    <Input variant="subtle" value={state.jiraTitle} onChange={(e) => setField('jiraTitle', e.target.value)} />
                 </Field.Root>
 
                 <Field.Root>
                     <Field.Label>Descripción corta</Field.Label>
-                    <Input value={state.brief} onChange={(e) => setField('brief', e.target.value)} />
+                    <Input variant="subtle" value={state.brief} onChange={(e) => setField('brief', e.target.value)} />
                 </Field.Root>
 
-                <Box borderWidth="1px" borderRadius="md" p={4}>
+                <Box borderWidth="1px" borderRadius="md" p={4} mt={2}>
                     <Heading size="md" mb={4}>Librerías</Heading>
                     {state.components.map((comp, index) => (
                         <HStack key={index} mb={3} gap={3} alignItems="flex-end">
 
                             <Field.Root flex={2}>
                                 { index === 0 && <Field.Label>Nombre</Field.Label> }
-                                <Input
+                                <Input variant="flushed"
                                     value={comp.componente}
                                     list="library-suggestions"
                                     placeholder='Nombre de la librería'
@@ -227,7 +227,7 @@ export const App = () => {
                             </Field.Root>
                             <Field.Root flex={1}>
                                 { index === 0 && <Field.Label>Versión DLL</Field.Label> }
-                                <Input
+                                <Input variant="flushed"
                                     placeholder='10.1.4.1'
                                     value={comp.version_dll}
                                     onChange={(e) => updateComponent(index, 'version_dll', e.target.value)}
@@ -236,7 +236,7 @@ export const App = () => {
                             <Field.Root flex={1}>
                                 { index === 0 && <Field.Label>Versión ASCX</Field.Label> }
 
-                                <Input
+                                <Input variant="flushed"
                                     placeholder='10.1.4.1'
                                     value={comp.version_ascx}
                                     onChange={(e) => updateComponent(index, 'version_ascx', e.target.value)}

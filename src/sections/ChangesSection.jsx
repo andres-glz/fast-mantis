@@ -78,7 +78,7 @@ const PasteArea = ({ index, change, handlePaste, handleRemoveImage, handlePrevie
                   background: 'transparent',
                   cursor: 'zoom-in',
                 }}
-                
+
                 aria-label={`Ver imagen ${imgIndex + 1} en grande`}
               >
                 <img src={src} alt={`Preview ${imgIndex + 1}`} style={{ maxWidth: '180px', maxHeight: '160px', display: 'block', objectFit: 'cover' }} />
@@ -189,72 +189,72 @@ export const ChangesSection = ({ changes, setChanges }) => {
 
   return (
     <>
-      <Flex borderWidth="1px" borderRadius="md" p={4} gap={6} flexDirection={'column'}>
-      <Heading size="md" mb={2}>Cambios realizados</Heading>
+      <Flex borderWidth="1px" borderRadius="md" p={4} gap={6} flexDirection={'column'} mt={2}>
+        <Heading size="md" mb={2}>Cambios realizados</Heading>
 
-      {changes.map((change, index) => (
-        <VStack
-          key={index}
-          ref={(el) => { itemRefs.current[index] = el; }}
-          onDragStart={() => handleDragStart(index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDrop={() => handleDrop(index)}
-          onDragEnd={() => handleDragEnd(index)}
-          style={{
-            opacity: dragIndex.current === index ? 0.4 : 1,
-            outline: draggingOver === index ? '2px dashed #3182ce' : 'none',
-            borderRadius: '6px',
-            transition: 'outline 0.1s',
-          }}
-        >
-          <HStack w="full" alignItems="flex-start">
-            <Flex
-              alignSelf="flex-end"
-              mb={2}
-              cursor="grab"
-              color="gray.400"
-              onMouseDown={() => {
-                if (itemRefs.current[index]) {
-                  itemRefs.current[index].draggable = true;
-                }
-              }}
-              onMouseUp={() => {
-                if (itemRefs.current[index]) {
-                  itemRefs.current[index].draggable = false;
-                }
-              }}
-            >
-              <GripVertical size={18} />
-            </Flex>
-            <Field.Root flex={1}>
-              <Field.Label>Cambio {index + 1}</Field.Label>
-              <Textarea autoresize value={change.description} onChange={(e) => setChanges(changes.map((c, i) => i === index ? { ...c, description: e.target.value } : c))} />
-            </Field.Root>
-            <Button
-              variant="ghost"
-              colorPalette="red"
-              size="sm"
-              mt={6}
-              width="32px"
-              disabled={changes.length === 1}
-              onClick={() => handleRemoveChange(index)}
-              aria-label="Eliminar cambio"
-            >
-              <X />
-            </Button>
-          </HStack>
-          <PasteArea
-            index={index}
-            change={change}
-            handlePaste={handlePaste}
-            handleRemoveImage={handleRemoveImage}
-            handlePreviewImage={handlePreviewImage}
-          />
-        </VStack>
-      ))}
-      <Flex justifyContent="flex-end">
-        <Button onClick={() => setChanges([...changes, { description: "", images: [] }])} variant={'outline'}>Agregar cambio</Button>
-      </Flex>
+        {changes.map((change, index) => (
+          <VStack
+            key={index}
+            ref={(el) => { itemRefs.current[index] = el; }}
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDrop={() => handleDrop(index)}
+            onDragEnd={() => handleDragEnd(index)}
+            style={{
+              opacity: dragIndex.current === index ? 0.4 : 1,
+              outline: draggingOver === index ? '2px dashed #3182ce' : 'none',
+              borderRadius: '6px',
+              transition: 'outline 0.1s',
+            }}
+          >
+            <HStack w="full" alignItems="flex-start">
+              <Flex
+                alignSelf="flex-end"
+                mb={2}
+                cursor="grab"
+                color="gray.400"
+                onMouseDown={() => {
+                  if (itemRefs.current[index]) {
+                    itemRefs.current[index].draggable = true;
+                  }
+                }}
+                onMouseUp={() => {
+                  if (itemRefs.current[index]) {
+                    itemRefs.current[index].draggable = false;
+                  }
+                }}
+              >
+                <GripVertical size={18} />
+              </Flex>
+              <Field.Root flex={1}>
+                <Field.Label>Cambio {index + 1}</Field.Label>
+                <Textarea autoresize value={change.description} onChange={(e) => setChanges(changes.map((c, i) => i === index ? { ...c, description: e.target.value } : c))} />
+              </Field.Root>
+              <Button
+                variant="ghost"
+                colorPalette="red"
+                size="sm"
+                mt={6}
+                width="32px"
+                disabled={changes.length === 1}
+                onClick={() => handleRemoveChange(index)}
+                aria-label="Eliminar cambio"
+              >
+                <X />
+              </Button>
+            </HStack>
+            <PasteArea
+              index={index}
+              change={change}
+              handlePaste={handlePaste}
+              handleRemoveImage={handleRemoveImage}
+              handlePreviewImage={handlePreviewImage}
+            />
+          </VStack>
+        ))}
+        <Flex justifyContent="flex-end">
+          <Button onClick={() => setChanges([...changes, { description: "", images: [] }])} variant={'outline'}>Agregar cambio</Button>
+        </Flex>
       </Flex>
 
       {previewImage && (
