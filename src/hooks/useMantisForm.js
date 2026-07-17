@@ -13,7 +13,7 @@ export const initialState = {
     output: "",
     components: [{ componente: "", version_dll: "", version_ascx: "" }],
     otherComponents: [{ name: "", type: { label: "", value: "" }, version: "" }],
-    changes: [{ description: "", images: [] }],
+    changes: [{ description: "", images: [], showInPM: true, showInPDF: true, showInCommit: true }],
 
     // Optional sections — each has an `enabled` toggle and a `value`
     sprint: { enabled: true, value: 44 },
