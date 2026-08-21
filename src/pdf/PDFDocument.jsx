@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 
 });
 
-const PDFDocument = ({ data }) => {
+const PDFDocument = ({ data, username }) => {
     const today = new Date().toISOString().split('T')[0];
     const changes = data.changes || [];
     const otherComponents = (data.otherComponents || []).filter((c) => (c.name || "").trim() !== "");
@@ -57,13 +57,20 @@ const PDFDocument = ({ data }) => {
         <Document>
             <Page size="A4" style={styles.page}>
                 {/* Header */}
-                <View style={{ marginBottom: 20, flexDirection: 'row', gap: 10 }}>
-                    <View style={{ backgroundColor: '#E37878', width: 10 }} />
-                    <View style={{ flexDirection: 'column', gap: 2 }}>
-                        <Text style={{ fontWeight: 'semibold' }}>Unit Test Document</Text>
-                        <Text>FSW-{data.mantis}</Text>
-                        <Text style={{ color: '#CF0E0E' }}>TCA Software Solutions</Text>
+                <View style={{ marginBottom: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <View style={{ backgroundColor: '#E37878', width: 10 }} />
+                        <View style={{ flexDirection: 'column', gap: 2 }}>
+                            <Text style={{ fontWeight: 'semibold' }}>Unit Test Document</Text>
+                            <Text>FSW-{data.mantis}</Text>
+                            <Text style={{ color: '#CF0E0E' }}>TCA Software Solutions</Text>
+                        </View>
                     </View>
+                    {username ? (
+                        <View style={{ paddingVertical: 5, paddingHorizontal: 10, borderBottom: '1px solid #969292', backgroundColor: '#F5F5F5', alignSelf: 'flex-start' }}>
+                            <Text style={{ fontSize: 9, color: '#CF0E0E' }}>{username}</Text>
+                        </View>
+                    ) : null}
                 </View>
 
                 {/* Info table */}

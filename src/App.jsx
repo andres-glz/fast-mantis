@@ -422,7 +422,7 @@ export const App = () => {
                 </Flex>
                 <Toaster />
 
-                {pdfData && <PDFViewerContainer data={pdfData} />}
+                {pdfData && <PDFViewerContainer data={pdfData} username={username} />}
 
             </Stack>
         </Container>
