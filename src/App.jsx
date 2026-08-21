@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switch, Textarea, Field, Input, NativeSelect } from '@chakra-ui/react'
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
-import { LuCheck, LuCopy } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText, Plus } from 'lucide-react'
+import { LuCheck, LuCopy, LuUser } from 'react-icons/lu'
+import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText, Plus, Check, RotateCcw } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
@@ -26,6 +26,8 @@ import { generateMarkdown } from './generators/generateMarkdown'
 import { OtherComponents } from './sections/OtherComponents'
 
 const librarySuggestions = [...new Set(LIBRARIES)]
+
+const USERNAME_STORAGE_KEY = 'fastMantis.username'
 
 export const App = () => {
     const {
@@ -52,6 +54,39 @@ export const App = () => {
     const [isCopyGitTitle, setIsCopyGitTitle] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [pdfData, setPdfData] = useState(null);
+    const [username, setUsername] = useState('');
+    const [isUsernameSaved, setIsUsernameSaved] = useState(false);
+
+    useEffect(() => {
+        const storedUsername = localStorage.getItem(USERNAME_STORAGE_KEY);
+        if (storedUsername) {
+            setUsername(storedUsername);
+            setIsUsernameSaved(true);
+        }
+    }, []);
+
+    function handleSaveUsername() {
+        localStorage.setItem(USERNAME_STORAGE_KEY, username);
+        setIsUsernameSaved(true);
+        toaster.create({
+            description: `Usuario guardado`,
+            type: "success",
+            closable: true,
+            duration: 1500,
+        });
+    }
+
+    function handleClearUsername() {
+        localStorage.removeItem(USERNAME_STORAGE_KEY);
+        setUsername('');
+        setIsUsernameSaved(false);
+        toaster.create({
+            description: `Usuario eliminado`,
+            type: "info",
+            closable: true,
+            duration: 1500,
+        });
+    }
 
     function copyOutput() {
         navigator.clipboard.writeText(state.output).then(() => {
@@ -137,12 +172,25 @@ export const App = () => {
     return (
         <Container p={5} maxW="4xl" mt={3}>
             <Flex mb={2} justifyContent="space-between" alignItems="center">
-                <Heading size={'2xl'} mb={5} flex={1}>
+                <Heading size={'2xl'} mb={5}>
                     <HStack gap={3} alignItems="center">
                         <img src="/favicon.svg" alt="Mantis logo" style={{ width: '2rem', height: '2rem' }} />
                         Fast Mantis
                     </HStack>
                 </Heading>
+                <HStack gap={1} alignItems="center">
+                    <InputGroup startElement={<LuUser />}>
+                        <Input
+                            size="xs"
+                            variant="flushed"
+                            placeholder="username@tca.com"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </InputGroup>
+                    <Button size="xs" variant={'ghost'} p={0} colorPalette={isUsernameSaved ? 'green' : 'blue'} onClick={handleSaveUsername}><Check /></Button>
+                    <Button size="xs" variant={'ghost'} p={0} onClick={handleClearUsername}><RotateCcw /></Button>
+                </HStack>
                 <ColorModeButton />
 
             </Flex>
