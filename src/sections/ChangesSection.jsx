@@ -151,7 +151,7 @@ export const ChangesSection = ({ changes, setChanges }) => {
               </Button>
             </HStack>
             <HStack w="full" alignItems="stretch" spacing={10}>
-              <ChangeOptions change={change} onChange={(newData) => setChanges(changes.map((c, i) => i === index ? { ...c, ...newData } : c))} />
+              {/* <ChangeOptions change={change} onChange={(newData) => setChanges(changes.map((c, i) => i === index ? { ...c, ...newData } : c))} /> */}
               <PasteArea
                 index={index}
                 change={change}
@@ -163,7 +163,7 @@ export const ChangesSection = ({ changes, setChanges }) => {
           </VStack>
         ))}
         <Flex justifyContent="flex-end">
-          <Button onClick={() => setChanges([...changes, { description: "", images: [], showInPM: true, showInPDF: true, showInCommit: true }])} variant={'outline'}><Plus />Agregar</Button>
+          <Button onClick={() => setChanges([...changes, { description: "", images: [] }])} variant={'outline'}><Plus />Agregar</Button>
         </Flex>
       </Flex>
 
