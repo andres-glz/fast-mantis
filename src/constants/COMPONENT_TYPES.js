@@ -4,4 +4,5 @@ export const TYPES_COMPONENTS = [
     {label: 'Template', value: 'template', path: 'templates/', mdx_title: 'TEMPLATE', emoji: '📋'},
     {label: 'Icono', value: 'icon', path: 'assets/icons/', mdx_title: 'ICON', emoji: '🖼️'},
     {label: 'Formato de Impresión', value: 'formato_impresion', path: 'formatos/', mdx_title: 'FORMAT', emoji: '🖨️'},
+    {label: 'Styles', value: 'styles', path: 'assets/css/', mdx_title: 'STYLES', emoji: '🎨'},
 ];
