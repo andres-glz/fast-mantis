@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switch, Textarea, Field, Input, NativeSelect } from '@chakra-ui/react'
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
-import { LuCheck, LuCopy } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText, Plus } from 'lucide-react'
+import { LuCheck, LuCopy, LuUser } from 'react-icons/lu'
+import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText, Plus, Check, RotateCcw, Eye } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
+
+//MARKDOWN
+import { MarkdownPreviewModal } from './components/markdown/MarkdownPreviewModal'
 
 //COMPONENTS
 import { ChangesSection } from './sections/ChangesSection'
@@ -26,6 +29,8 @@ import { generateMarkdown } from './generators/generateMarkdown'
 import { OtherComponents } from './sections/OtherComponents'
 
 const librarySuggestions = [...new Set(LIBRARIES)]
+
+const USERNAME_STORAGE_KEY = 'fastMantis.username'
 
 export const App = () => {
     const {
@@ -52,6 +57,42 @@ export const App = () => {
     const [isCopyGitTitle, setIsCopyGitTitle] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [pdfData, setPdfData] = useState(null);
+    const [username, setUsername] = useState('');
+    const [isUsernameSaved, setIsUsernameSaved] = useState(false);
+    const [isGeneratingCommitGit, setIsGeneratingCommitGit] = useState(false);
+    const [isMarkdownPreviewEnabled, setIsMarkdownPreviewEnabled] = useState(false);
+    const [isMarkdownPreviewOpen, setIsMarkdownPreviewOpen] = useState(false);
+
+    useEffect(() => {
+        const storedUsername = localStorage.getItem(USERNAME_STORAGE_KEY);
+        if (storedUsername) {
+            setUsername(storedUsername);
+            setIsUsernameSaved(true);
+        }
+    }, []);
+
+    function handleSaveUsername() {
+        localStorage.setItem(USERNAME_STORAGE_KEY, username);
+        setIsUsernameSaved(true);
+        toaster.create({
+            description: `Usuario guardado`,
+            type: "success",
+            closable: true,
+            duration: 1500,
+        });
+    }
+
+    function handleClearUsername() {
+        localStorage.removeItem(USERNAME_STORAGE_KEY);
+        setUsername('');
+        setIsUsernameSaved(false);
+        toaster.create({
+            description: `Usuario eliminado`,
+            type: "info",
+            closable: true,
+            duration: 1500,
+        });
+    }
 
     function copyOutput() {
         navigator.clipboard.writeText(state.output).then(() => {
@@ -92,9 +133,12 @@ export const App = () => {
     }
 
     async function handleGenerateCommitGit() {
+        setIsGeneratingCommitGit(true);
         setSectionSwitch('gitCommitTitle', true);
         setSectionValue('gitCommitTitle', generateCommitTitle());
         setField('output', await generateCommitGit(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(false);
+        setIsGeneratingCommitGit(false);
     }
 
     function generateCommitTitle() {
@@ -113,16 +157,19 @@ export const App = () => {
     function handleGenerateMarkdown() {
         setSectionSwitch('gitCommitTitle', false);
         setField('output', generateMarkdown(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(true);
     }
 
     function handleGenerateCommit() {
         setSectionSwitch('gitCommitTitle', false);
         setField('output', generateCommit(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(false);
     }
 
     function handleGeneratePM() {
         setSectionSwitch('gitCommitTitle', false);
         setField('output', generatePM(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(false);
     }
 
     function handleGeneratePDF() {
@@ -132,17 +179,31 @@ export const App = () => {
     function handleReset() {
         reset();
         setPdfData(null);
+        setIsMarkdownPreviewEnabled(false);
     }
 
     return (
         <Container p={5} maxW="4xl" mt={3}>
             <Flex mb={2} justifyContent="space-between" alignItems="center">
-                <Heading size={'2xl'} mb={5} flex={1}>
+                <Heading size={'2xl'} mb={5}>
                     <HStack gap={3} alignItems="center">
                         <img src="/favicon.svg" alt="Mantis logo" style={{ width: '2rem', height: '2rem' }} />
                         Fast Mantis
                     </HStack>
                 </Heading>
+                <HStack gap={1} alignItems="center">
+                    <InputGroup startElement={<LuUser />}>
+                        <Input
+                            size="xs"
+                            variant="flushed"
+                            placeholder="username@tca.com"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </InputGroup>
+                    <Button size="xs" variant={'ghost'} p={0} colorPalette={isUsernameSaved ? 'green' : 'blue'} onClick={handleSaveUsername}><Check /></Button>
+                    <Button size="xs" variant={'ghost'} p={0} onClick={handleClearUsername}><RotateCcw /></Button>
+                </HStack>
                 <ColorModeButton />
 
             </Flex>
@@ -339,7 +400,12 @@ export const App = () => {
                     <Flex justifyContent="flex-end" gap={3} flexWrap="wrap">
                         <Button variant={'subtle'} onClick={handleGenerateMarkdown}><Terminal />Markdown</Button>
                         <Button variant={'subtle'} onClick={handleGenerateCommit}><ReceiptText />Commit</Button>
-                        <Button variant={'subtle'} onClick={handleGenerateCommitGit}><GitCommitVertical />Commit Git</Button>
+                        <Button
+                            variant={'subtle'}
+                            onClick={handleGenerateCommitGit}
+                            loading={isGeneratingCommitGit}
+                            loadingText="Traduciendo..."
+                        ><GitCommitVertical />Commit Git</Button>
                         <Button onClick={handleGeneratePM}><TextAlignJustify />PM</Button>
                         <Button onClick={handleGeneratePDF}><FileText />PDF</Button>
                     </Flex>
@@ -365,16 +431,29 @@ export const App = () => {
                 )}
                 <HStack mt={5} alignItems="start" gap={3}>
                     <Textarea placeholder='Output' variant={'subtle'} value={state.output} onChange={(e) => setField('output', e.target.value)} autoresize />
-                    <Button variant={isCopy ? 'plain' : 'ghost'} onClick={copyOutput}>
-                        {isCopy ? <LuCheck /> : <LuCopy />}
-                    </Button>
+                    <Stack gap={1}>
+                        <Button variant={isCopy ? 'plain' : 'ghost'} onClick={copyOutput}>
+                            {isCopy ? <LuCheck /> : <LuCopy />}
+                        </Button>
+                        {isMarkdownPreviewEnabled && (
+                            <Button variant={'ghost'} onClick={() => setIsMarkdownPreviewOpen(true)}>
+                                <Eye />
+                            </Button>
+                        )}
+                    </Stack>
                 </HStack>
                 <Flex justifyContent="flex-end">
                     <Button onClick={() => setField('output', '')} variant={'surface'}><BrushCleaning />Limpiar</Button>
                 </Flex>
                 <Toaster />
 
-                {pdfData && <PDFViewerContainer data={pdfData} />}
+                {pdfData && <PDFViewerContainer data={pdfData} username={username} />}
+
+                <MarkdownPreviewModal
+                    isOpen={isMarkdownPreviewOpen}
+                    onClose={() => setIsMarkdownPreviewOpen(false)}
+                    content={state.output}
+                />
 
             </Stack>
         </Container>

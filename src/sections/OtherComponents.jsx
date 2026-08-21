@@ -6,11 +6,13 @@ import { TYPES_COMPONENTS } from '../constants/COMPONENT_TYPES'
 import { PRINT_FORMATS } from '../constants/PRINT_FORMATS'
 import { STORE_PROCEDURES } from '../constants/STORE_PROCEDURES'
 import { TEMPLATES } from '../constants/TEMPLATES'
+import { STYLES } from '../constants/STYLES'
 
 const SUGGESTIONS_BY_TYPE = {
     formato_impresion: [...new Set(PRINT_FORMATS)],
     store_procedure: [...new Set(STORE_PROCEDURES)],
     template: [...new Set(TEMPLATES)],
+    styles: [...new Set(STYLES)],
 }
 
 function getSuggestionsForType(type) {

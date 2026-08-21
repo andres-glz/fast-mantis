@@ -2,11 +2,11 @@ import { memo } from 'react';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import PDFDocument from './PDFDocument';
 
-export const PDFViewerContainer = memo(function PDFViewerContainer({ data }) {
+export const PDFViewerContainer = memo(function PDFViewerContainer({ data, username }) {
     return (
         <div>
             <PDFDownloadLink
-                document={<PDFDocument data={data} />}
+                document={<PDFDocument data={data} username={username} />}
                 fileName={`FSW-${data.mantis}.pdf`}
                 style={{
                     textDecoration: 'none',
@@ -22,7 +22,7 @@ export const PDFViewerContainer = memo(function PDFViewerContainer({ data }) {
             </PDFDownloadLink>
 
             <PDFViewer style={{ width: '100%', height: '80vh', border: 'none' }}>
-                <PDFDocument data={data} />
+                <PDFDocument data={data} username={username} />
             </PDFViewer>
         </div>
     );
