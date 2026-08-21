@@ -3,10 +3,13 @@ import { Box, Button, Container, Flex, Heading, HStack, InputGroup, Stack, Switc
 import { ColorModeButton } from './components/ui/color-mode'
 import { Toaster, toaster } from '@/components/ui/toaster'
 import { LuCheck, LuCopy, LuUser } from 'react-icons/lu'
-import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText, Plus, Check, RotateCcw } from 'lucide-react'
+import { BrushCleaning, GitCommitVertical, TextAlignJustify, Save, Terminal, Trash2, X, FileText, ReceiptText, Plus, Check, RotateCcw, Eye } from 'lucide-react'
 
 //PDF
 import { PDFViewerContainer } from './pdf/PDFViewerContainer'
+
+//MARKDOWN
+import { MarkdownPreviewModal } from './components/markdown/MarkdownPreviewModal'
 
 //COMPONENTS
 import { ChangesSection } from './sections/ChangesSection'
@@ -56,6 +59,8 @@ export const App = () => {
     const [pdfData, setPdfData] = useState(null);
     const [username, setUsername] = useState('');
     const [isUsernameSaved, setIsUsernameSaved] = useState(false);
+    const [isMarkdownPreviewEnabled, setIsMarkdownPreviewEnabled] = useState(false);
+    const [isMarkdownPreviewOpen, setIsMarkdownPreviewOpen] = useState(false);
 
     useEffect(() => {
         const storedUsername = localStorage.getItem(USERNAME_STORAGE_KEY);
@@ -130,6 +135,7 @@ export const App = () => {
         setSectionSwitch('gitCommitTitle', true);
         setSectionValue('gitCommitTitle', generateCommitTitle());
         setField('output', await generateCommitGit(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(false);
     }
 
     function generateCommitTitle() {
@@ -148,16 +154,19 @@ export const App = () => {
     function handleGenerateMarkdown() {
         setSectionSwitch('gitCommitTitle', false);
         setField('output', generateMarkdown(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(true);
     }
 
     function handleGenerateCommit() {
         setSectionSwitch('gitCommitTitle', false);
         setField('output', generateCommit(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(false);
     }
 
     function handleGeneratePM() {
         setSectionSwitch('gitCommitTitle', false);
         setField('output', generatePM(obtenerDatos()));
+        setIsMarkdownPreviewEnabled(false);
     }
 
     function handleGeneratePDF() {
@@ -167,6 +176,7 @@ export const App = () => {
     function handleReset() {
         reset();
         setPdfData(null);
+        setIsMarkdownPreviewEnabled(false);
     }
 
     return (
@@ -413,9 +423,16 @@ export const App = () => {
                 )}
                 <HStack mt={5} alignItems="start" gap={3}>
                     <Textarea placeholder='Output' variant={'subtle'} value={state.output} onChange={(e) => setField('output', e.target.value)} autoresize />
-                    <Button variant={isCopy ? 'plain' : 'ghost'} onClick={copyOutput}>
-                        {isCopy ? <LuCheck /> : <LuCopy />}
-                    </Button>
+                    <Stack gap={1}>
+                        <Button variant={isCopy ? 'plain' : 'ghost'} onClick={copyOutput}>
+                            {isCopy ? <LuCheck /> : <LuCopy />}
+                        </Button>
+                        {isMarkdownPreviewEnabled && (
+                            <Button variant={'ghost'} onClick={() => setIsMarkdownPreviewOpen(true)}>
+                                <Eye />
+                            </Button>
+                        )}
+                    </Stack>
                 </HStack>
                 <Flex justifyContent="flex-end">
                     <Button onClick={() => setField('output', '')} variant={'surface'}><BrushCleaning />Limpiar</Button>
@@ -423,6 +440,12 @@ export const App = () => {
                 <Toaster />
 
                 {pdfData && <PDFViewerContainer data={pdfData} username={username} />}
+
+                <MarkdownPreviewModal
+                    isOpen={isMarkdownPreviewOpen}
+                    onClose={() => setIsMarkdownPreviewOpen(false)}
+                    content={state.output}
+                />
 
             </Stack>
         </Container>
