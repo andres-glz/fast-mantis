@@ -59,6 +59,7 @@ export const App = () => {
     const [pdfData, setPdfData] = useState(null);
     const [username, setUsername] = useState('');
     const [isUsernameSaved, setIsUsernameSaved] = useState(false);
+    const [isGeneratingCommitGit, setIsGeneratingCommitGit] = useState(false);
     const [isMarkdownPreviewEnabled, setIsMarkdownPreviewEnabled] = useState(false);
     const [isMarkdownPreviewOpen, setIsMarkdownPreviewOpen] = useState(false);
 
@@ -132,10 +133,12 @@ export const App = () => {
     }
 
     async function handleGenerateCommitGit() {
+        setIsGeneratingCommitGit(true);
         setSectionSwitch('gitCommitTitle', true);
         setSectionValue('gitCommitTitle', generateCommitTitle());
         setField('output', await generateCommitGit(obtenerDatos()));
         setIsMarkdownPreviewEnabled(false);
+        setIsGeneratingCommitGit(false);
     }
 
     function generateCommitTitle() {
@@ -397,7 +400,12 @@ export const App = () => {
                     <Flex justifyContent="flex-end" gap={3} flexWrap="wrap">
                         <Button variant={'subtle'} onClick={handleGenerateMarkdown}><Terminal />Markdown</Button>
                         <Button variant={'subtle'} onClick={handleGenerateCommit}><ReceiptText />Commit</Button>
-                        <Button variant={'subtle'} onClick={handleGenerateCommitGit}><GitCommitVertical />Commit Git</Button>
+                        <Button
+                            variant={'subtle'}
+                            onClick={handleGenerateCommitGit}
+                            loading={isGeneratingCommitGit}
+                            loadingText="Traduciendo..."
+                        ><GitCommitVertical />Commit Git</Button>
                         <Button onClick={handleGeneratePM}><TextAlignJustify />PM</Button>
                         <Button onClick={handleGeneratePDF}><FileText />PDF</Button>
                     </Flex>
